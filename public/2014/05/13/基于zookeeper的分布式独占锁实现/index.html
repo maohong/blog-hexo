@@ -1,0 +1,992 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="zookeeper,分布式应用,分布式协调," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="tech.tech" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="背景在分布式系统中，经常遇到这样一种场景：选举一个节点执行某一个任务，当此节点宕机后，其他节点可以接管并继续执行这个任务。由于各个节点运行的代码是一样的，彼此之间也是平等的，各个节点如何可以知道自己是否可以执行这个任务呢？当有节点宕机时，又如何判断自己是否可以接管任务呢？在我们的分布式任务调度系统中，需要选取调度器集群中的一个节点进行轮询任务状态，这里使用了zookeeper来实现一个统一的分布式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于zookeeper的分布式独占锁实现">
+<meta property="og:url" content="http://maohong.github.io/2014/05/13/基于zookeeper的分布式独占锁实现/index.html">
+<meta property="og:site_name" content="tech.tech">
+<meta property="og:description" content="背景在分布式系统中，经常遇到这样一种场景：选举一个节点执行某一个任务，当此节点宕机后，其他节点可以接管并继续执行这个任务。由于各个节点运行的代码是一样的，彼此之间也是平等的，各个节点如何可以知道自己是否可以执行这个任务呢？当有节点宕机时，又如何判断自己是否可以接管任务呢？在我们的分布式任务调度系统中，需要选取调度器集群中的一个节点进行轮询任务状态，这里使用了zookeeper来实现一个统一的分布式">
+<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20140502-%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/1.jpg">
+<meta property="og:updated_time" content="2016-07-04T15:59:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于zookeeper的分布式独占锁实现">
+<meta name="twitter:description" content="背景在分布式系统中，经常遇到这样一种场景：选举一个节点执行某一个任务，当此节点宕机后，其他节点可以接管并继续执行这个任务。由于各个节点运行的代码是一样的，彼此之间也是平等的，各个节点如何可以知道自己是否可以执行这个任务呢？当有节点宕机时，又如何判断自己是否可以接管任务呢？在我们的分布式任务调度系统中，需要选取调度器集群中的一个节点进行轮询任务状态，这里使用了zookeeper来实现一个统一的分布式">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20140502-%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 1016827,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 基于zookeeper的分布式独占锁实现 | tech.tech </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9c95fa7980a3758aa72daefb9e05734c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">tech.tech</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Long way to go ...</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                基于zookeeper的分布式独占锁实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2014-05-13T21:05:01+08:00" content="2014-05-13">
+              2014-05-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/分布式应用/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式应用</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/05/13/基于zookeeper的分布式独占锁实现/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/05/13/基于zookeeper的分布式独占锁实现/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2014/05/13/基于zookeeper的分布式独占锁实现/" class="leancloud_visitors" data-flag-title="基于zookeeper的分布式独占锁实现">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在分布式系统中，经常遇到这样一种场景：选举一个节点执行某一个任务，当此节点宕机后，其他节点可以接管并继续执行这个任务。由于各个节点运行的代码是一样的，彼此之间也是平等的，各个节点如何可以知道自己是否可以执行这个任务呢？当有节点宕机时，又如何判断自己是否可以接管任务呢？在我们的分布式任务调度系统中，需要选取调度器集群中的一个节点进行轮询任务状态，这里使用了zookeeper来实现一个统一的分布式锁，从而选出轮询节点。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>如图所示，每台服务器启动后，都在同一目录下建一个临时顺序节点（EPHEMERAL_SEQUENTIAL），并获取此目录下的所有节点信息，如果自己的序号是最小的，就认为获取到了锁，可以执行任务。若自己的节点不是最小的，就认为自己没有获取到锁，不执行任务，同时，在比自己小1个序号的节点上增加监听。当比自己小1个序号的节点发生变化的时候，再次检查自己是否是最小序号的节点，如果是则获取锁，否则继续监听比自己小1个序号的节点。</p>
+<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140502-%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/1.jpg" alt=""></p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>以下是一个demo实现程序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DistributedExclusiveLock</span> <span class="keyword">implements</span> <span class="title">Watcher</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">private</span> ZooKeeper zk;</div><div class="line">	<span class="keyword">private</span> String lockDir = <span class="string">"/testlock"</span>;<span class="comment">//锁节点所在zk的目录</span></div><div class="line">	<span class="keyword">private</span> String lockSymbol = <span class="string">"_lock_"</span>;<span class="comment">//锁节点标志</span></div><div class="line">	<span class="keyword">private</span> String lockName;<span class="comment">//锁节点前缀，构造锁时由外部传入</span></div><div class="line">	<span class="keyword">private</span> String waitNodePath;<span class="comment">//等待的前一个锁的节点名称</span></div><div class="line">	<span class="keyword">private</span> String myNodePath;<span class="comment">//当前锁</span></div><div class="line">	<span class="keyword">private</span> CountDownLatch latch;<span class="comment">//计数器</span></div><div class="line">	<span class="keyword">private</span> String threadId;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 创建分布式锁</div><div class="line">	 * <span class="doctag">@param</span> lockName 竞争资源标志,lockName中不能包含单词lock</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DistributedExclusiveLock</span><span class="params">(String zkServers, String lockName)</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">		<span class="comment">//简单校验lockDir路径</span></div><div class="line">		<span class="keyword">if</span> (!lockDir.startsWith(<span class="string">"/"</span>))</div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"LockDir Path must start with / character! lockDir="</span> + lockDir);</div><div class="line">		<span class="keyword">if</span> (lockDir.endsWith(<span class="string">"/"</span>))</div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"LockDir Path must not end with / character! lockDir="</span> + lockDir);</div><div class="line"></div><div class="line">		<span class="keyword">this</span>.lockName = lockName;</div><div class="line">		<span class="keyword">this</span>.threadId = getThreadId();</div><div class="line">		<span class="comment">// 创建一个与服务器的连接</span></div><div class="line">		<span class="keyword">try</span></div><div class="line">		&#123;</div><div class="line">			zk = <span class="keyword">new</span> ZooKeeper(zkServers, <span class="number">3000</span>, <span class="keyword">this</span>);</div><div class="line">			createLockDirIfNecessary(lockDir);</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"Error while initializing DistributedExclusiveLock!"</span> + e.getMessage(), e);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> String <span class="title">getThreadId</span><span class="params">()</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Thread-"</span> + Thread.currentThread().getId();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 在zk上建立lock目录，如果目录不存在，逐级创建节点</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">createLockDirIfNecessary</span><span class="params">(String zkDir)</span> <span class="keyword">throws</span> KeeperException, InterruptedException</span></div><div class="line">	&#123;</div><div class="line">		<span class="comment">//zkDir是一级节点，如/cloudscheduler</span></div><div class="line">		<span class="keyword">if</span> (zkDir.indexOf(<span class="string">"/"</span>) == zkDir.lastIndexOf(<span class="string">"/"</span>))</div><div class="line">		&#123;</div><div class="line">			Stat stat = zk.exists(zkDir, <span class="keyword">false</span>);</div><div class="line">			<span class="keyword">if</span>(stat == <span class="keyword">null</span>)&#123;</div><div class="line">				<span class="comment">// 创建一级节点</span></div><div class="line">				zk.create(zkDir, <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">0</span>], Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span>	<span class="comment">//zkDir非一级节点</span></div><div class="line">		&#123;</div><div class="line">			String parentDir = zkDir.substring(<span class="number">0</span>, zkDir.lastIndexOf(<span class="string">"/"</span>));</div><div class="line">			<span class="keyword">if</span> (zk.exists(parentDir, <span class="keyword">false</span>) != <span class="keyword">null</span>)</div><div class="line">			&#123;	<span class="comment">//如果父节点存在，建当前节点</span></div><div class="line">				Stat stat = zk.exists(zkDir, <span class="keyword">false</span>);</div><div class="line">				<span class="keyword">if</span>(stat == <span class="keyword">null</span>)&#123;</div><div class="line">					<span class="comment">// 创建非一级节点</span></div><div class="line">					zk.create(zkDir, <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">0</span>], Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">else</span></div><div class="line">			&#123;	<span class="comment">//否则，先建父节点，再建当前节点</span></div><div class="line">				createLockDirIfNecessary(parentDir);</div><div class="line">				createLockDirIfNecessary(zkDir);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * zookeeper节点的监视器</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(WatchedEvent event)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (event.getType() == EventType.NodeDeleted)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span> (<span class="keyword">this</span>.latch!=<span class="keyword">null</span>)</div><div class="line">				<span class="keyword">this</span>.latch.countDown();</div><div class="line">			<span class="keyword">try</span></div><div class="line">			&#123;</div><div class="line">				List&lt;String&gt; childrenNodes = zk.getChildren(lockDir, <span class="keyword">false</span>);</div><div class="line">				<span class="comment">// 排序</span></div><div class="line">				Collections.sort(childrenNodes);</div><div class="line">				System.out.println(<span class="string">"Node: "</span> + event.getPath()</div><div class="line">						+ <span class="string">" change event is deleted! Current locked nodes:\n\t"</span></div><div class="line">						+ StringUtils.join(childrenNodes,<span class="string">"\n\t"</span>));</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">catch</span> (KeeperException e)</div><div class="line">			&#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">catch</span> (InterruptedException e)</div><div class="line">			&#123;</div><div class="line">				e.printStackTrace();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span>(tryLockInner())</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			<span class="keyword">else</span></div><div class="line">				<span class="keyword">return</span> waitForLockInner(waitNodePath);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (Exception e)</div><div class="line">		&#123;</div><div class="line">			e.printStackTrace();</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">tryLockInner</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span></div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span>(lockName.contains(lockSymbol))</div><div class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"lockName can not contains "</span> + lockSymbol);</div><div class="line">			<span class="comment">//创建临时子节点</span></div><div class="line">			myNodePath = zk.create(lockDir + <span class="string">"/"</span> + lockName + lockSymbol, <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">0</span>], Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);</div><div class="line">			System.out.println(threadId + <span class="string">" created "</span> + myNodePath);</div><div class="line">			<span class="comment">//取出所有子节点</span></div><div class="line">			List&lt;String&gt; subNodes = zk.getChildren(lockDir, <span class="keyword">false</span>);</div><div class="line">			<span class="comment">//取出所有lockName的锁</span></div><div class="line">			List&lt;String&gt; lockedNodes = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">			<span class="keyword">for</span> (String node : subNodes) &#123;</div><div class="line">				String nodePrefix = node.split(lockSymbol)[<span class="number">0</span>];</div><div class="line">				<span class="keyword">if</span>(nodePrefix.equals(lockName))&#123;<span class="comment">//对锁名做个判断，前缀相同即为同一组锁</span></div><div class="line">					lockedNodes.add(node);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			Collections.sort(lockedNodes);</div><div class="line">			System.out.println(<span class="string">"Current locked nodes: \n\t"</span> + StringUtils.join(lockedNodes, <span class="string">"\n\t"</span>));</div><div class="line">			<span class="keyword">if</span>(myNodePath.equals(lockDir + <span class="string">"/"</span> + lockedNodes.get(<span class="number">0</span>)))&#123;</div><div class="line">				<span class="comment">//如果是最小的节点,则表示取得锁</span></div><div class="line">	            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	        &#125;</div><div class="line">			<span class="comment">//如果不是最小的节点，找到比自己小1的节点，在List中的位置是自己的前一位</span></div><div class="line">			String myZnodeName = myNodePath.substring(myNodePath.lastIndexOf(<span class="string">"/"</span>) + <span class="number">1</span>);</div><div class="line">			waitNodePath = lockDir + <span class="string">"/"</span> + lockedNodes.get(lockedNodes.indexOf(myZnodeName)-<span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (KeeperException e)</div><div class="line">		&#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (InterruptedException e)</div><div class="line">		&#123;</div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">waitForLockInner</span><span class="params">(String waitPath)</span> <span class="keyword">throws</span> InterruptedException, KeeperException </span>&#123;</div><div class="line">        Stat stat = zk.exists(waitPath, <span class="keyword">true</span>);</div><div class="line">        <span class="comment">//判断比自己小一个数的节点是否存在,如果存在则需等待锁,同时注册监听</span></div><div class="line">        <span class="keyword">if</span> (stat != <span class="keyword">null</span>)</div><div class="line">        &#123;</div><div class="line">        	System.out.println(threadId + <span class="string">" waiting for "</span> + waitPath);</div><div class="line">        	<span class="keyword">this</span>.latch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</div><div class="line">        	<span class="keyword">this</span>.latch.await(); <span class="comment">//不加超时时间，无限等待</span></div><div class="line">        	<span class="comment">//</span></div><div class="line">        	<span class="comment">//waiting</span></div><div class="line">        	<span class="comment">//Zzzzz...</span></div><div class="line">        	<span class="comment">//still waiting</span></div><div class="line">        	<span class="comment">//</span></div><div class="line">        	<span class="comment">// 探测到节点变化，刷新节点信息</span></div><div class="line">        	<span class="keyword">this</span>.latch = <span class="keyword">null</span>;</div><div class="line">        	<span class="keyword">try</span></div><div class="line">			&#123;</div><div class="line">				<span class="comment">// 确认myNodePath是否真的是列表中的最小节点</span></div><div class="line">				List&lt;String&gt; childrenNodes = zk.getChildren(lockDir, <span class="keyword">false</span>);</div><div class="line">				<span class="comment">// 排序</span></div><div class="line">				Collections.sort(childrenNodes);</div><div class="line">				<span class="keyword">if</span>(myNodePath.equals(lockDir + <span class="string">"/"</span> + childrenNodes.get(<span class="number">0</span>)))</div><div class="line">					<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">				<span class="keyword">else</span></div><div class="line">				&#123;</div><div class="line">				    <span class="comment">// 说明waitNodePath是由于出现异常而挂掉的 , 更新waitNodePath</span></div><div class="line">					String thisNodeName = myNodePath.substring(myNodePath.lastIndexOf(<span class="string">"/"</span>) + <span class="number">1</span>);</div><div class="line">					<span class="keyword">int</span> index = childrenNodes.indexOf(thisNodeName);</div><div class="line">					waitNodePath = lockDir + <span class="string">"/"</span> + childrenNodes.get(index - <span class="number">1</span>);</div><div class="line">					<span class="comment">//重新等待锁</span></div><div class="line">					<span class="keyword">return</span> waitForLockInner(waitNodePath);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">catch</span> (KeeperException e)</div><div class="line">			&#123;</div><div class="line">				e.printStackTrace();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">catch</span> (InterruptedException e)</div><div class="line">			&#123;</div><div class="line">				e.printStackTrace();</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">			&#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">try</span></div><div class="line">		&#123;</div><div class="line">			System.out.println(threadId + <span class="string">" unlock "</span> + myNodePath);</div><div class="line">			zk.delete(myNodePath,-<span class="number">1</span>);</div><div class="line">			myNodePath = <span class="keyword">null</span>;</div><div class="line">			zk.close();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (InterruptedException e)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"Error while releasing lock! "</span> + e.getMessage(), e);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (KeeperException e)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"Error while releasing lock! "</span> + e.getMessage(), e);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></div><div class="line">	&#123;</div><div class="line">	        <span class="comment">//一个简单的测试</span></div><div class="line">		List&lt;Thread&gt; workers = <span class="keyword">new</span> ArrayList&lt;Thread&gt;(<span class="number">10</span>);</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>; i&lt;<span class="number">10</span>; ++i)</div><div class="line">		&#123;</div><div class="line">			Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable()</div><div class="line">			&#123;</div><div class="line">				String zk = <span class="string">"10.12.10.169:2181,10.12.139.141:2181"</span>;</div><div class="line">				<span class="meta">@Override</span></div><div class="line">				<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line">				&#123;</div><div class="line">					<span class="keyword">try</span></div><div class="line">					&#123;</div><div class="line">						DistributedExclusiveLock lock = <span class="keyword">new</span> DistributedExclusiveLock(zk, <span class="string">"zkLock"</span>);</div><div class="line">						<span class="keyword">if</span> (lock.tryLock());</div><div class="line">						&#123;</div><div class="line">							String tid = <span class="string">"Thread-"</span> + Thread.currentThread().getId();</div><div class="line">							<span class="keyword">int</span> time = <span class="keyword">new</span> Random().nextInt(<span class="number">5000</span>);</div><div class="line">							System.out.println(tid + <span class="string">" gets lock and is working, sleep for "</span> + time + <span class="string">" ms"</span>);</div><div class="line">							Thread.sleep(time);</div><div class="line">							lock.unlock();</div><div class="line">							System.out.println(tid + <span class="string">" releases lock"</span>);</div><div class="line">						&#125;</div><div class="line">					&#125;</div><div class="line">					<span class="keyword">catch</span> (Exception e)</div><div class="line">					&#123;</div><div class="line">						e.printStackTrace();</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;);</div><div class="line">			thread.setDaemon(<span class="keyword">true</span>);</div><div class="line">			workers.add(thread);</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">for</span> (Thread t : workers)</div><div class="line">		&#123;</div><div class="line">			t.start();</div><div class="line">		&#125;</div><div class="line">		Thread.sleep(<span class="number">100000</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper/" rel="tag">#zookeeper</a>
+          
+            <a href="/tags/分布式应用/" rel="tag">#分布式应用</a>
+          
+            <a href="/tags/分布式协调/" rel="tag">#分布式协调</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/03/28/使用httpclient引起的tcp连接数超高问题/" rel="next" title="使用httpclient引起的tcp连接数超高问题">
+                <i class="fa fa-chevron-left"></i> 使用httpclient引起的tcp连接数超高问题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/06/01/redis服务端连接断开问题诊断/" rel="prev" title="redis服务端连接断开问题诊断">
+                redis服务端连接断开问题诊断 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2014/05/13/基于zookeeper的分布式独占锁实现/"
+           data-title="基于zookeeper的分布式独占锁实现" data-url="http://maohong.github.io/2014/05/13/基于zookeeper的分布式独占锁实现/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="maohong" />
+          <p class="site-author-name" itemprop="name">maohong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/maohong" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/maohong_V" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/hong.mao.758" target="_blank" title="Facebook">
+                  
+                    <i class="fa fa-fw fa-facebook"></i>
+                  
+                  Facebook
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.linkedin.com/in/mao-hong-1a129044" target="_blank" title="Linkedin">
+                  
+                    <i class="fa fa-fw fa-linkedin"></i>
+                  
+                  Linkedin
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/jacksonmh" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/maohong" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">3.</span> <span class="nav-text">实现</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">maohong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"maohongtech"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("NJQxhfae96k6xF1J7vNCdlb8-gzGzoHsz", "vmjAuBBlq8c8lVCxvWMxC5nr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

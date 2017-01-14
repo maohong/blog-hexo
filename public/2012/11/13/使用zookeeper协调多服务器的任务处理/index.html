@@ -1,0 +1,1001 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="zookeeper,分布式协调,横向扩展," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="tech.tech" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="背景Zookeeper是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。
+问题我们看下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用zookeeper协调多服务器的任务处理">
+<meta property="og:url" content="http://maohong.github.io/2012/11/13/使用zookeeper协调多服务器的任务处理/index.html">
+<meta property="og:site_name" content="tech.tech">
+<meta property="og:description" content="背景Zookeeper是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。
+问题我们看下">
+<meta property="og:updated_time" content="2016-07-09T08:47:05.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用zookeeper协调多服务器的任务处理">
+<meta name="twitter:description" content="背景Zookeeper是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。
+问题我们看下">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 1016827,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 使用zookeeper协调多服务器的任务处理 | tech.tech </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9c95fa7980a3758aa72daefb9e05734c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">tech.tech</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">Long way to go ...</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用zookeeper协调多服务器的任务处理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2012-11-13T16:16:43+08:00" content="2012-11-13">
+              2012-11-13
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/分布式应用/" itemprop="url" rel="index">
+                    <span itemprop="name">分布式应用</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2012/11/13/使用zookeeper协调多服务器的任务处理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2012/11/13/使用zookeeper协调多服务器的任务处理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2012/11/13/使用zookeeper协调多服务器的任务处理/" class="leancloud_visitors" data-flag-title="使用zookeeper协调多服务器的任务处理">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p><strong>Zookeeper</strong>是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>我们看下这样一种场景：<br>前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。<br>若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。<br>最简单的方法是，按消息id对后台节点数取模（msgid%server_num=mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server_num减1，并修改各节点取数据的mod数。<br>毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。<br>因此，采用多节点处理数据时，有两个问题：<br>1.避免多个节点重复处理同一条数据，否则造成资源浪费。<br>2.不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。<br>也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！<br><a id="more"></a></p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>我们通过zookeeper维护一个目录（比如/app/config），服务器启动时连接zookeeper集群并在该目录下创建表示自己的临时节点（CreateMode.EPHEMERAL），相当于注册一个节点，节点名可以是本服务器的ip，节点的值为该服务器的mod值，按注册顺序从0递增，即第一个注册的节点值为0，第二个为1，依次下去，因此/app/config的子节点数就是注册到zookeeper的服务器数。同时，各服务器监听/app/config目录，当其发生变化（新加入子节点、子节点失效等）时，每个服务器都将获取到这个事件并进行相应的处理。  </p>
+<h2 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h2><p>下面针对以上场景给出一个示例demo。<br><strong>Server类</strong>：服务器<br><strong>ClientThread类</strong>：服务器上的单个线程<br><strong>NodeStateWatcher类</strong>：服务器监听zookeeper集群的监听器<br><strong>ZkOperationImpl类</strong>：zookeeper的操作封装（实现ZkOperation接口）<br>Server.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Server</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></div><div class="line">&#123;</div><div class="line"> <span class="keyword">private</span> ClientThread[] clients = <span class="keyword">new</span> ClientThread[Constant.THREAD_COUNT]; <span class="comment">// 数据处理线程</span></div><div class="line"> <span class="keyword">private</span> ZkOperation operationCient = <span class="keyword">null</span>; <span class="comment">// 与zookeeper的连接</span></div><div class="line"> <span class="keyword">private</span> Watcher nodeWatcher = <span class="keyword">null</span>;  <span class="comment">// 向zookeeper注册的监听器</span></div><div class="line"> <span class="keyword">private</span> String name; <span class="comment">// 服务器名</span></div><div class="line"> <span class="keyword">private</span> String ip; <span class="comment">// 服务器ip</span></div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="title">Server</span><span class="params">(String name, String ip)</span> <span class="keyword">throws</span> IOException, KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">this</span>.name = name;</div><div class="line">  <span class="keyword">this</span>.ip = ip;</div><div class="line">  <span class="keyword">this</span>.operationCient = <span class="keyword">new</span> ZkOperationImpl();</div><div class="line">  <span class="keyword">this</span>.nodeWatcher = <span class="keyword">new</span> NodeStateWatcher(<span class="keyword">this</span>);</div><div class="line">  <span class="keyword">this</span>.operationCient.init(Constant.ZK_ADDRESS, nodeWatcher);</div><div class="line"> </div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;Constant.THREAD_COUNT; ++i)</div><div class="line">  &#123;</div><div class="line">   ClientThread c = <span class="keyword">new</span> ClientThread(i, ip, name);</div><div class="line">   <span class="keyword">this</span>.clients[i]= c;</div><div class="line">  &#125;</div><div class="line"> </div><div class="line">  initialize();</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="comment">/**</span></div><div class="line">  * 向zookeeper集群注册</div><div class="line">  * <span class="doctag">@throws</span> InterruptedException</div><div class="line">  * <span class="doctag">@throws</span> KeeperException</div><div class="line">  */</div><div class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">registerServer</span><span class="params">()</span> <span class="keyword">throws</span> KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line">  List&lt;String&gt; children = operationCient.getChilds(Constant.ROOT_PATH);</div><div class="line">  <span class="keyword">int</span> max = -<span class="number">1</span>;</div><div class="line">  <span class="keyword">for</span> (String childName : children)</div><div class="line">  &#123;</div><div class="line">   String childPath = Constant.ROOT_PATH + <span class="string">"/"</span> + childName;</div><div class="line">   <span class="keyword">int</span> mod = Integer.parseInt(operationCient.getData(childPath));</div><div class="line">   <span class="keyword">if</span> (mod &gt; max)</div><div class="line">    max = mod;</div><div class="line">  &#125;</div><div class="line">  String path = Constant.ROOT_PATH + <span class="string">"/"</span> + ip;</div><div class="line">  operationCient.apendTempNode(path, String.valueOf(max&lt;<span class="number">0</span> ? <span class="number">0</span> : ++max));</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="comment">/**</span></div><div class="line">  * 启动数据处理线程</div><div class="line">  * <span class="doctag">@throws</span> Exception</div><div class="line">  */</div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">for</span> (ClientThread c : clients)</div><div class="line">  &#123;</div><div class="line">   CommonUtil.log(<span class="string">"Start thread-"</span> + c);</div><div class="line">   c.start();</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="comment">/**</span></div><div class="line">  * 服务器初始化</div><div class="line">  * <span class="doctag">@throws</span> InterruptedException</div><div class="line">  * <span class="doctag">@throws</span> KeeperException</div><div class="line">  */</div><div class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initialize</span><span class="params">()</span> <span class="keyword">throws</span> KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line">  CommonUtil.log(<span class="string">"================"</span>);</div><div class="line">  CommonUtil.log(<span class="keyword">this</span> + <span class="string">" initializing..."</span>);</div><div class="line"> </div><div class="line">  <span class="comment">// 配置信息的上级目录不存在</span></div><div class="line">  <span class="keyword">if</span> (!operationCient.exist(Constant.ROOT_PATH))</div><div class="line">  &#123;</div><div class="line">   System.err.println(<span class="string">"Root path "</span> + Constant.ROOT_PATH + <span class="string">"does not exist!!! Create root path..."</span>);</div><div class="line">   operationCient.apendPresistentNode(Constant.ROOT_PATH, <span class="string">"1"</span>);</div><div class="line">   CommonUtil.log(<span class="string">"Create root path "</span> + Constant.ROOT_PATH + <span class="string">" successfully!"</span>);</div><div class="line">  &#125;</div><div class="line"> </div><div class="line">  registerServer();</div><div class="line"> </div><div class="line">  refreshConfig();</div><div class="line"> </div><div class="line">  CommonUtil.log(<span class="keyword">this</span> + <span class="string">" finish initializing..."</span>);</div><div class="line">  CommonUtil.log(<span class="string">"================"</span>);</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="comment">/**</span></div><div class="line">  * watch到节点变化后，刷新节点数和模数</div><div class="line">  * <span class="doctag">@throws</span> InterruptedException</div><div class="line">  * <span class="doctag">@throws</span> KeeperException</div><div class="line">  */</div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">()</span> <span class="keyword">throws</span> KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line">  CommonUtil.log(<span class="string">"================"</span>);</div><div class="line">  CommonUtil.log(<span class="keyword">this</span> + <span class="string">":freshing..."</span>);</div><div class="line"> </div><div class="line">  refreshConfig();</div><div class="line"> </div><div class="line">  CommonUtil.log(<span class="keyword">this</span> + <span class="string">":end freshing..."</span>);</div><div class="line">  CommonUtil.log(<span class="string">"================"</span>);</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">refreshConfig</span><span class="params">()</span> <span class="keyword">throws</span> KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line">  String version = operationCient.getData(Constant.ROOT_PATH);</div><div class="line">  CommonUtil.log(<span class="string">"SYSTEM VERSION: "</span> + version);</div><div class="line">  List&lt;String&gt; children = operationCient.getChilds(Constant.ROOT_PATH);</div><div class="line"> </div><div class="line">  <span class="comment">// 1. 服务器数量为子节点的个数</span></div><div class="line">  <span class="keyword">int</span> nodeCount = children.size();</div><div class="line">  CommonUtil.log(<span class="string">"Server count:"</span> + nodeCount);</div><div class="line">  <span class="keyword">synchronized</span> (CommonUtil.BASE)</div><div class="line">  &#123;</div><div class="line">   CommonUtil.BASE = nodeCount * Constant.THREAD_COUNT;</div><div class="line">  &#125;</div><div class="line"> </div><div class="line">  <span class="keyword">if</span> (CommonUtil.BASE.intValue() == <span class="number">0</span>)</div><div class="line">   <span class="keyword">return</span>;</div><div class="line"> </div><div class="line">  Integer mod = <span class="keyword">null</span>;</div><div class="line"> </div><div class="line">  <span class="keyword">for</span> (String childName : children)</div><div class="line">  &#123;</div><div class="line">   <span class="comment">// 2. 获取本服务器的模数</span></div><div class="line">   <span class="keyword">if</span> (childName.equals(ip))</div><div class="line">   &#123;</div><div class="line">    String childPath = Constant.ROOT_PATH + <span class="string">"/"</span> + childName;</div><div class="line">    mod = Integer.parseInt(operationCient.getData(childPath));</div><div class="line">    <span class="keyword">break</span>;</div><div class="line">   &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// 3. 刷新数据处理线程的取模数</span></div><div class="line">  <span class="keyword">if</span> (mod == <span class="keyword">null</span>)</div><div class="line">  &#123;</div><div class="line">   System.err.println(<span class="string">"Did not get the mod number for "</span> + <span class="keyword">this</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">else</span></div><div class="line">  &#123;</div><div class="line">   CommonUtil.log(<span class="keyword">this</span> + <span class="string">", mod="</span> + mod + <span class="string">",base="</span> + CommonUtil.BASE);</div><div class="line">   <span class="keyword">for</span> (ClientThread c : clients)</div><div class="line">   &#123;</div><div class="line">    c.refresh(mod);</div><div class="line">   &#125;</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.name + <span class="string">"@"</span> + <span class="keyword">this</span>.ip + <span class="string">""</span>;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="keyword">public</span> ClientThread[] getClients()</div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> clients;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> ZkOperation <span class="title">getOperationCient</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> operationCient;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> Watcher <span class="title">getNodeWatcher</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> nodeWatcher;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> String <span class="title">getIp</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> ip;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>ClientThread.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></div><div class="line">&#123;</div><div class="line"> </div><div class="line"> <span class="keyword">private</span> Integer modNum = -<span class="number">1</span>;</div><div class="line"> <span class="keyword">private</span> Integer threadId;</div><div class="line"> <span class="keyword">private</span> String ip;</div><div class="line"> <span class="keyword">private</span> String clientName;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="title">ClientThread</span><span class="params">(Integer threadId, String ip, String clientName)</span> <span class="keyword">throws</span> IOException, KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">this</span>.threadId = threadId;</div><div class="line">  <span class="keyword">this</span>.ip = ip;</div><div class="line">  <span class="keyword">this</span>.clientName = clientName;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="comment">/**</span></div><div class="line">  * watch到节点变化后，调用刷新节点数和模数</div><div class="line">  * <span class="doctag">@throws</span> InterruptedException</div><div class="line">  * <span class="doctag">@throws</span> KeeperException</div><div class="line">  */</div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">(<span class="keyword">int</span> mod)</span> <span class="keyword">throws</span> KeeperException, InterruptedException</span></div><div class="line"> &#123;</div><div class="line"><span class="comment">//  CommonUtil.log("================");</span></div><div class="line"><span class="comment">//  CommonUtil.log(this + ":freshing...");</span></div><div class="line"> </div><div class="line">  <span class="keyword">synchronized</span> (<span class="keyword">this</span>.modNum)</div><div class="line">  &#123;</div><div class="line">   <span class="keyword">this</span>.modNum = threadId + mod * Constant.THREAD_COUNT;</div><div class="line">  &#125;</div><div class="line"> </div><div class="line">  CommonUtil.log(<span class="keyword">this</span> + <span class="string">":"</span> + modNum + <span class="string">"/"</span> + CommonUtil.BASE);</div><div class="line"> </div><div class="line"><span class="comment">//  CommonUtil.log(this + ":end freshing...");</span></div><div class="line"><span class="comment">//  CommonUtil.log("================");</span></div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="meta">@Override</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">long</span> start = System.currentTimeMillis();</div><div class="line">  <span class="keyword">while</span> (System.currentTimeMillis() - start &lt; Constant.DURATION)</div><div class="line">  &#123;</div><div class="line">   <span class="comment">// 处理数据</span></div><div class="line">   processData();</div><div class="line">   <span class="keyword">try</span></div><div class="line">   &#123;</div><div class="line">    Thread.sleep(<span class="number">5000</span>); <span class="comment">//等待2秒</span></div><div class="line">   &#125;</div><div class="line">   <span class="keyword">catch</span> (InterruptedException e)</div><div class="line">   &#123;</div><div class="line">    e.printStackTrace();</div><div class="line">   &#125;</div><div class="line">  &#125;</div><div class="line"> </div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="comment">/**</span></div><div class="line">  * 模拟处理数据逻辑：打印属于本线程的数据</div><div class="line">  */</div><div class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">processData</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">if</span> (CommonUtil.BASE.equals(<span class="number">0</span>) || modNum.equals(-<span class="number">1</span>))</div><div class="line">  &#123;</div><div class="line">   CommonUtil.err(<span class="keyword">this</span> + <span class="string">": did not get server_count and modNum!!!"</span>);</div><div class="line">   <span class="keyword">return</span>;</div><div class="line">  &#125;</div><div class="line"> </div><div class="line">  StringBuilder sb = <span class="keyword">new</span> StringBuilder(<span class="keyword">this</span> + <span class="string">"-"</span> + modNum + <span class="string">"/"</span> + CommonUtil.BASE + <span class="string">":"</span>);</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;Constant.NUMBERS.length; ++i)</div><div class="line">  &#123;</div><div class="line">   <span class="keyword">int</span> n = Constant.NUMBERS[i];</div><div class="line">   <span class="keyword">if</span> (n % CommonUtil.BASE == modNum)</div><div class="line">   &#123;</div><div class="line">    sb.append(n).append(<span class="string">" "</span>);</div><div class="line">   &#125;</div><div class="line">  &#125;</div><div class="line">  CommonUtil.log(sb.toString());</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="meta">@Override</span></div><div class="line"> <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="string">"ClientThread_"</span> + <span class="keyword">this</span>.clientName + <span class="string">"@"</span> + <span class="keyword">this</span>.ip + <span class="string">"-thread_"</span> + <span class="keyword">this</span>.threadId;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> Integer <span class="title">getModNum</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> modNum;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setModNum</span><span class="params">(Integer modNum)</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">this</span>.modNum = modNum;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> String <span class="title">getClientName</span><span class="params">()</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">return</span> clientName;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>NodeStateWatcher.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NodeStateWatcher</span> <span class="keyword">implements</span> <span class="title">Watcher</span></span></div><div class="line">&#123;</div><div class="line"> <span class="keyword">private</span> Server server;</div><div class="line"> </div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="title">NodeStateWatcher</span><span class="params">(Server server)</span></span></div><div class="line"> &#123;</div><div class="line">  <span class="keyword">this</span>.server = server;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="meta">@Override</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(WatchedEvent event)</span></span></div><div class="line"> &#123;</div><div class="line">  StringBuilder outputStr = <span class="keyword">new</span> StringBuilder();</div><div class="line">  <span class="keyword">if</span> (server.getName() != <span class="keyword">null</span>)</div><div class="line">  &#123;</div><div class="line">   outputStr.append(server.getName() + <span class="string">" get an event."</span>);</div><div class="line">  &#125;</div><div class="line">  outputStr.append(<span class="string">"Path:"</span> + event.getPath());</div><div class="line">  outputStr.append(<span class="string">",state:"</span> + event.getState());</div><div class="line">  outputStr.append(<span class="string">",type:"</span> + event.getType());</div><div class="line">  CommonUtil.log(outputStr.toString());</div><div class="line"> </div><div class="line">  <span class="comment">// 发现子节点有变化</span></div><div class="line">  <span class="keyword">if</span> (event.getType() == EventType.NodeChildrenChanged</div><div class="line">    || event.getType() == EventType.NodeDataChanged</div><div class="line">    || event.getType() == EventType.NodeDeleted)</div><div class="line">  &#123;</div><div class="line">   CommonUtil.log(<span class="string">"In event: "</span> + event.getType());</div><div class="line">   <span class="keyword">try</span></div><div class="line">   &#123;</div><div class="line">    server.refresh();</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">catch</span> (KeeperException e)</div><div class="line">   &#123;</div><div class="line">    e.printStackTrace();</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">catch</span> (InterruptedException e)</div><div class="line">   &#123;</div><div class="line">    e.printStackTrace();</div><div class="line">   &#125;</div><div class="line">   CommonUtil.log(<span class="string">"End event: "</span> + event.getType());</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>ZkOperationImpl.java 部分zk操作代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apendPresistentNode</span><span class="params">(String path, String data)</span></span></div><div class="line">   <span class="keyword">throws</span> KeeperException, InterruptedException</div><div class="line"> &#123;</div><div class="line">  <span class="keyword">if</span> (zk != <span class="keyword">null</span>)</div><div class="line">  &#123;</div><div class="line">   zk.create(path, data.getBytes(), Ids.OPEN_ACL_UNSAFE,</div><div class="line">     CreateMode.PERSISTENT);</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="meta">@Override</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delNode</span><span class="params">(String path)</span> <span class="keyword">throws</span> KeeperException,</span></div><div class="line">   InterruptedException</div><div class="line"> &#123;</div><div class="line">  <span class="keyword">if</span> (zk != <span class="keyword">null</span>)</div><div class="line">  &#123;</div><div class="line">   zk.delete(path, -<span class="number">1</span>);</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> </div><div class="line"> <span class="meta">@Override</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">exist</span><span class="params">(String path)</span> <span class="keyword">throws</span> KeeperException,</span></div><div class="line">   InterruptedException</div><div class="line"> &#123;</div><div class="line">  <span class="keyword">if</span> (zk != <span class="keyword">null</span>)</div><div class="line">  &#123;</div><div class="line">   <span class="keyword">return</span> zk.exists(path, <span class="keyword">true</span>) != <span class="keyword">null</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Main.java：主类，启动demo</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span></span></div><div class="line">&#123;</div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></div><div class="line"> &#123;</div><div class="line">  Server c1 = <span class="keyword">new</span> Server(<span class="string">"ServerA"</span>, <span class="string">"1.1.1.1"</span>);</div><div class="line">  Server c2 = <span class="keyword">new</span> Server(<span class="string">"ServerB"</span>, <span class="string">"1.1.1.2"</span>);</div><div class="line">  Server c3 = <span class="keyword">new</span> Server(<span class="string">"ServerC"</span>, <span class="string">"1.1.1.3"</span>);</div><div class="line"> </div><div class="line">  c1.start();</div><div class="line">  c2.start();</div><div class="line">  c3.start();</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>由于Server的3个实例在同一台机器上运行，连接到zookeeper时，用的是一个session，所以demo中没有通过程序断开server与zookeeper的连接，如果serverA断开，那么serverB和serverC与zookeeper的session连接也会失效，达不到演示效果，所以我们只能暂时在zookeeper客户端手工更改zookeeper上的配置信息，用于模拟server与zookeeper集群断开连接和增加server的情形。server启动后，会先向zookeeper注册节点，因此我们先手工删除节点，再手工添加节点。<br>手工执行的命令如下：  </p>
+<blockquote>
+<p>[zk: localhost:2181(CONNECTED) 141] delete /demo/1.1.1.3<br>[zk: localhost:2181(CONNECTED) 142] delete /demo/1.1.1.2<br>[zk: localhost:2181(CONNECTED) 143] delete /demo/1.1.1.1<br>[zk: localhost:2181(CONNECTED) 144] create -e /demo/1.1.1.1 0<br>[zk: localhost:2181(CONNECTED) 145] create -e /demo/1.1.1.2 1<br>[zk: localhost:2181(CONNECTED) 146] create -e /demo/1.1.1.3 2  </p>
+</blockquote>
+<p>可以通过程序打印信息发现，在节点配置信息每个服务器(Server)上的线程会动态的获取属于自己的数据并打印。当然，这里对数据的处理逻辑很简单，仅仅是打印出来，处理的数据也只是内存中的一个数组，对于类似这样的但是更复杂的应用场景，zookeeper同样适用，但是需要更多的考虑服务器与zookeeper集群连接的可靠性（比如session超时重连）、权限机制等等。<br>上面的demo程序打印信息如下：  </p>
+<blockquote>
+<p>[2012-11-14 15:18:42] New zk connection session: 0<br>[2012-11-14 15:18:42] ================<br>[2012-11-14 15:18:42] ServerA@1.1.1.1 initializing…<br>[2012-11-14 15:18:47] Thread-0 get an event.Path:null,state:SyncConnected,type:None<br>[2012-11-14 15:18:47] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:18:47] In event: NodeChildrenChanged<br>[2012-11-14 15:18:47] ================<br>[2012-11-14 15:18:47] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:18:47] SYSTEM VERSION: 1<br>[2012-11-14 15:18:47] SYSTEM VERSION: 1<br>[2012-11-14 15:18:47] Server count:1<br>[2012-11-14 15:18:47] Server count:1<br>[2012-11-14 15:18:47] ServerA@1.1.1.1, mod=0,base=5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_0:0/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_1:1/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_2:2/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_3:3/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_4:4/5<br>[2012-11-14 15:18:47] ServerA@1.1.1.1 finish initializing…<br>[2012-11-14 15:18:47] ================<br>[2012-11-14 15:18:47] ServerA@1.1.1.1, mod=0,base=5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_0:0/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_1:1/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_2:2/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_3:3/5<br>[2012-11-14 15:18:47] ClientThread_ServerA@1.1.1.1-thread_4:4/5<br>[2012-11-14 15:18:47] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:18:47] ================<br>[2012-11-14 15:18:47] End event: NodeChildrenChanged<br>[2012-11-14 15:18:47] New zk connection session: 0<br>[2012-11-14 15:18:47] ================<br>[2012-11-14 15:18:47] ServerB@1.1.1.2 initializing…<br>[2012-11-14 15:18:51] Thread-6 get an event.Path:null,state:SyncConnected,type:None<br>[2012-11-14 15:18:51] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:18:51] In event: NodeChildrenChanged<br>[2012-11-14 15:18:51] ================<br>[2012-11-14 15:18:51] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:18:51] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:18:51] In event: NodeChildrenChanged<br>[2012-11-14 15:18:51] ================<br>[2012-11-14 15:18:51] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:18:51] SYSTEM VERSION: 1<br>[2012-11-14 15:18:51] SYSTEM VERSION: 1<br>[2012-11-14 15:18:51] Server count:2<br>[2012-11-14 15:18:51] SYSTEM VERSION: 1<br>[2012-11-14 15:18:51] ServerA@1.1.1.1, mod=0,base=10<br>[2012-11-14 15:18:51] ClientThread_ServerA@1.1.1.1-thread_0:0/10<br>[2012-11-14 15:18:51] ClientThread_ServerA@1.1.1.1-thread_1:1/10<br>[2012-11-14 15:18:51] ClientThread_ServerA@1.1.1.1-thread_2:2/10<br>[2012-11-14 15:18:51] ClientThread_ServerA@1.1.1.1-thread_3:3/10<br>[2012-11-14 15:18:51] ClientThread_ServerA@1.1.1.1-thread_4:4/10<br>[2012-11-14 15:18:51] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:18:51] Server count:2<br>[2012-11-14 15:18:51] ================<br>[2012-11-14 15:18:51] End event: NodeChildrenChanged<br>[2012-11-14 15:18:51] Server count:2<br>[2012-11-14 15:18:51] ServerB@1.1.1.2, mod=1,base=10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_0:5/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_1:6/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_2:7/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_3:8/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_4:9/10<br>[2012-11-14 15:18:51] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:18:51] ================<br>[2012-11-14 15:18:51] End event: NodeChildrenChanged<br>[2012-11-14 15:18:51] ServerB@1.1.1.2, mod=1,base=10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_0:5/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_1:6/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_2:7/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_3:8/10<br>[2012-11-14 15:18:51] ClientThread_ServerB@1.1.1.2-thread_4:9/10<br>[2012-11-14 15:18:51] ServerB@1.1.1.2 finish initializing…<br>[2012-11-14 15:18:51] ================<br>[2012-11-14 15:18:51] New zk connection session: 0<br>[2012-11-14 15:18:51] ================<br>[2012-11-14 15:18:51] ServerC@1.1.1.3 initializing…<br>[2012-11-14 15:18:56] Thread-12 get an event.Path:null,state:SyncConnected,type:None<br>[2012-11-14 15:18:56] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:18:56] In event: NodeChildrenChanged<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:18:56] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:18:56] In event: NodeChildrenChanged<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:18:56] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:18:56] In event: NodeChildrenChanged<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:18:56] SYSTEM VERSION: 1<br>[2012-11-14 15:18:56] SYSTEM VERSION: 1<br>[2012-11-14 15:18:56] SYSTEM VERSION: 1<br>[2012-11-14 15:18:56] Server count:3<br>[2012-11-14 15:18:56] ServerA@1.1.1.1, mod=0,base=15<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_0:0/15<br>[2012-11-14 15:18:56] Server count:3<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_1:1/15<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_2:2/15<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_3:3/15<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_4:4/15<br>[2012-11-14 15:18:56] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] End event: NodeChildrenChanged<br>[2012-11-14 15:18:56] SYSTEM VERSION: 1<br>[2012-11-14 15:18:56] Server count:3<br>[2012-11-14 15:18:56] ServerB@1.1.1.2, mod=1,base=15<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_0:5/15<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_1:6/15<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_2:7/15<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_3:8/15<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_4:9/15<br>[2012-11-14 15:18:56] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] End event: NodeChildrenChanged<br>[2012-11-14 15:18:56] Server count:3<br>[2012-11-14 15:18:56] ServerC@1.1.1.3, mod=2,base=15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_0:10/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_1:11/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_2:12/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_3:13/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_4:14/15<br>[2012-11-14 15:18:56] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] End event: NodeChildrenChanged<br>[2012-11-14 15:18:56] ServerC@1.1.1.3, mod=2,base=15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_0:10/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_1:11/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_2:12/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_3:13/15<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_4:14/15<br>[2012-11-14 15:18:56] ServerC@1.1.1.3 finish initializing…<br>[2012-11-14 15:18:56] ================<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerA@1.1.1.1-thread_0<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerB@1.1.1.2-thread_0<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerC@1.1.1.3-thread_0<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerB@1.1.1.2-thread_1<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerA@1.1.1.1-thread_1<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_0-0/15:15 30<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerA@1.1.1.1-thread_2<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_0-10/15:10 25<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerA@1.1.1.1-thread_3<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_0-5/15:5 20<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerA@1.1.1.1-thread_4<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_1-1/15:1 16<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_3-3/15:3 18<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_2-2/15:2 17<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerB@1.1.1.2-thread_2<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_1-6/15:6 21<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerB@1.1.1.2-thread_3<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_2-7/15:7 22<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_3-8/15:8 23<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerC@1.1.1.3-thread_1<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerB@1.1.1.2-thread_4<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_1-11/15:11 26<br>[2012-11-14 15:18:56] ClientThread_ServerA@1.1.1.1-thread_4-4/15:4 19<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerC@1.1.1.3-thread_2<br>[2012-11-14 15:18:56] ClientThread_ServerB@1.1.1.2-thread_4-9/15:9 24<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerC@1.1.1.3-thread_3<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_2-12/15:12 27<br>[2012-11-14 15:18:56] Start thread-ClientThread_ServerC@1.1.1.3-thread_4<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_3-13/15:13 28<br>[2012-11-14 15:18:56] ClientThread_ServerC@1.1.1.3-thread_4-14/15:14 29<br>[2012-11-14 15:19:01] ClientThread_ServerB@1.1.1.2-thread_0-5/15:5 20<br>[2012-11-14 15:19:01] ClientThread_ServerA@1.1.1.1-thread_3-3/15:3 18<br>[2012-11-14 15:19:01] ClientThread_ServerA@1.1.1.1-thread_0-0/15:15 30<br>[2012-11-14 15:19:01] ClientThread_ServerB@1.1.1.2-thread_1-6/15:6 21<br>[2012-11-14 15:19:01] ClientThread_ServerA@1.1.1.1-thread_1-1/15:1 16<br>[2012-11-14 15:19:01] ClientThread_ServerC@1.1.1.3-thread_0-10/15:10 25<br>[2012-11-14 15:19:01] ClientThread_ServerA@1.1.1.1-thread_2-2/15:2 17<br>[2012-11-14 15:19:01] ClientThread_ServerB@1.1.1.2-thread_2-7/15:7 22<br>[2012-11-14 15:19:01] ClientThread_ServerC@1.1.1.3-thread_1-11/15:11 26<br>[2012-11-14 15:19:01] ClientThread_ServerB@1.1.1.2-thread_3-8/15:8 23<br>[2012-11-14 15:19:01] ClientThread_ServerA@1.1.1.1-thread_4-4/15:4 19<br>[2012-11-14 15:19:01] ClientThread_ServerC@1.1.1.3-thread_2-12/15:12 27<br>[2012-11-14 15:19:01] ClientThread_ServerB@1.1.1.2-thread_4-9/15:9 24<br>[2012-11-14 15:19:01] ClientThread_ServerC@1.1.1.3-thread_3-13/15:13 28<br>[2012-11-14 15:19:01] ClientThread_ServerC@1.1.1.3-thread_4-14/15:14 29<br>[2012-11-14 15:19:02] Thread-0 get an event.Path:/demo/1.1.1.1,state:SyncConnected,type:NodeDeleted<br>[2012-11-14 15:19:02] In event: NodeDeleted<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:02] Thread-12 get an event.Path:/demo/1.1.1.1,state:SyncConnected,type:NodeDeleted<br>[2012-11-14 15:19:02] In event: NodeDeleted<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:02] Thread-6 get an event.Path:/demo/1.1.1.1,state:SyncConnected,type:NodeDeleted<br>[2012-11-14 15:19:02] In event: NodeDeleted<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:02] SYSTEM VERSION: 1<br>[2012-11-14 15:19:02] SYSTEM VERSION: 1<br>[2012-11-14 15:19:02] SYSTEM VERSION: 1<br>[2012-11-14 15:19:02] Server count:2<br>[2012-11-14 15:19:02] Server count:2<br>Did not get the mod number for ServerA@1.1.1.1<br>[2012-11-14 15:19:02] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] End event: NodeDeleted<br>[2012-11-14 15:19:02] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:02] In event: NodeChildrenChanged<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:02] Server count:2<br>[2012-11-14 15:19:02] ServerC@1.1.1.3, mod=2,base=10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_0:10/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_1:11/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_2:12/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_3:13/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_4:14/10<br>[2012-11-14 15:19:02] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] End event: NodeDeleted<br>[2012-11-14 15:19:02] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:02] In event: NodeChildrenChanged<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:02] ServerB@1.1.1.2, mod=1,base=10<br>[2012-11-14 15:19:02] SYSTEM VERSION: 1<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_0:5/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_1:6/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_2:7/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_3:8/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_4:9/10<br>[2012-11-14 15:19:02] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] End event: NodeDeleted<br>[2012-11-14 15:19:02] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:02] In event: NodeChildrenChanged<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:02] SYSTEM VERSION: 1<br>[2012-11-14 15:19:02] Server count:2<br>[2012-11-14 15:19:02] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] End event: NodeChildrenChanged<br>Did not get the mod number for ServerA@1.1.1.1<br>[2012-11-14 15:19:02] SYSTEM VERSION: 1<br>[2012-11-14 15:19:02] Server count:2<br>[2012-11-14 15:19:02] Server count:2<br>[2012-11-14 15:19:02] ServerC@1.1.1.3, mod=2,base=10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_0:10/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_1:11/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_2:12/10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_3:13/10<br>[2012-11-14 15:19:02] ServerB@1.1.1.2, mod=1,base=10<br>[2012-11-14 15:19:02] ClientThread_ServerC@1.1.1.3-thread_4:14/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_0:5/10<br>[2012-11-14 15:19:02] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_1:6/10<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] End event: NodeChildrenChanged<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_2:7/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_3:8/10<br>[2012-11-14 15:19:02] ClientThread_ServerB@1.1.1.2-thread_4:9/10<br>[2012-11-14 15:19:02] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:02] ================<br>[2012-11-14 15:19:02] End event: NodeChildrenChanged<br>[2012-11-14 15:19:06] ClientThread_ServerA@1.1.1.1-thread_1-1/10:1 11 21<br>[2012-11-14 15:19:06] ClientThread_ServerB@1.1.1.2-thread_1-6/10:6 16 26<br>[2012-11-14 15:19:06] ClientThread_ServerB@1.1.1.2-thread_0-5/10:5 15 25<br>[2012-11-14 15:19:06] ClientThread_ServerA@1.1.1.1-thread_2-2/10:2 12 22<br>[2012-11-14 15:19:06] ClientThread_ServerC@1.1.1.3-thread_0-10/10:<br>[2012-11-14 15:19:06] ClientThread_ServerA@1.1.1.1-thread_3-3/10:3 13 23<br>[2012-11-14 15:19:06] ClientThread_ServerA@1.1.1.1-thread_0-0/10:10 20 30<br>[2012-11-14 15:19:06] ClientThread_ServerA@1.1.1.1-thread_4-4/10:4 14 24<br>[2012-11-14 15:19:06] ClientThread_ServerB@1.1.1.2-thread_2-7/10:7 17 27<br>[2012-11-14 15:19:06] ClientThread_ServerB@1.1.1.2-thread_3-8/10:8 18 28<br>[2012-11-14 15:19:06] ClientThread_ServerC@1.1.1.3-thread_1-11/10:<br>[2012-11-14 15:19:06] ClientThread_ServerC@1.1.1.3-thread_2-12/10:<br>[2012-11-14 15:19:06] ClientThread_ServerB@1.1.1.2-thread_4-9/10:9 19 29<br>[2012-11-14 15:19:06] ClientThread_ServerC@1.1.1.3-thread_3-13/10:<br>[2012-11-14 15:19:06] ClientThread_ServerC@1.1.1.3-thread_4-14/10:<br>[2012-11-14 15:19:07] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:07] In event: NodeChildrenChanged<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:07] Thread-12 get an event.Path:/demo/1.1.1.2,state:SyncConnected,type:NodeDeleted<br>[2012-11-14 15:19:07] In event: NodeDeleted<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:07] Thread-6 get an event.Path:/demo/1.1.1.2,state:SyncConnected,type:NodeDeleted<br>[2012-11-14 15:19:07] In event: NodeDeleted<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:07] SYSTEM VERSION: 1<br>Did not get the mod number for ServerA@1.1.1.1<br>[2012-11-14 15:19:07] Server count:1<br>[2012-11-14 15:19:07] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] End event: NodeChildrenChanged<br>[2012-11-14 15:19:07] SYSTEM VERSION: 1<br>[2012-11-14 15:19:07] SYSTEM VERSION: 1<br>[2012-11-14 15:19:07] Server count:1<br>[2012-11-14 15:19:07] Server count:1<br>[2012-11-14 15:19:07] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] End event: NodeDeleted<br>[2012-11-14 15:19:07] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:07] In event: NodeChildrenChanged<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] ServerB@1.1.1.2:freshing…<br>Did not get the mod number for ServerB@1.1.1.2<br>[2012-11-14 15:19:07] ServerC@1.1.1.3, mod=2,base=5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_0:10/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_1:11/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_2:12/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_3:13/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_4:14/5<br>[2012-11-14 15:19:07] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] End event: NodeDeleted<br>[2012-11-14 15:19:07] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:07] In event: NodeChildrenChanged<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:07] SYSTEM VERSION: 1<br>Did not get the mod number for ServerB@1.1.1.2<br>[2012-11-14 15:19:07] Server count:1<br>[2012-11-14 15:19:07] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] End event: NodeChildrenChanged<br>[2012-11-14 15:19:07] SYSTEM VERSION: 1<br>[2012-11-14 15:19:07] Server count:1<br>[2012-11-14 15:19:07] ServerC@1.1.1.3, mod=2,base=5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_0:10/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_1:11/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_2:12/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_3:13/5<br>[2012-11-14 15:19:07] ClientThread_ServerC@1.1.1.3-thread_4:14/5<br>[2012-11-14 15:19:07] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:07] ================<br>[2012-11-14 15:19:07] End event: NodeChildrenChanged<br>[2012-11-14 15:19:11] ClientThread_ServerB@1.1.1.2-thread_1-6/5:<br>[2012-11-14 15:19:11] ClientThread_ServerA@1.1.1.1-thread_0-0/5:5 10 15 20 25 30<br>[2012-11-14 15:19:11] ClientThread_ServerC@1.1.1.3-thread_0-10/5:<br>[2012-11-14 15:19:11] ClientThread_ServerA@1.1.1.1-thread_1-1/5:1 6 11 16 21 26<br>[2012-11-14 15:19:11] ClientThread_ServerA@1.1.1.1-thread_3-3/5:3 8 13 18 23 28<br>[2012-11-14 15:19:11] ClientThread_ServerB@1.1.1.2-thread_0-5/5:<br>[2012-11-14 15:19:11] ClientThread_ServerA@1.1.1.1-thread_2-2/5:2 7 12 17 22 27<br>[2012-11-14 15:19:11] ClientThread_ServerC@1.1.1.3-thread_1-11/5:<br>[2012-11-14 15:19:11] ClientThread_ServerB@1.1.1.2-thread_3-8/5:<br>[2012-11-14 15:19:11] ClientThread_ServerB@1.1.1.2-thread_2-7/5:<br>[2012-11-14 15:19:11] ClientThread_ServerA@1.1.1.1-thread_4-4/5:4 9 14 19 24 29<br>[2012-11-14 15:19:11] ClientThread_ServerB@1.1.1.2-thread_4-9/5:<br>[2012-11-14 15:19:11] ClientThread_ServerC@1.1.1.3-thread_2-12/5:<br>[2012-11-14 15:19:11] ClientThread_ServerC@1.1.1.3-thread_4-14/5:<br>[2012-11-14 15:19:11] ClientThread_ServerC@1.1.1.3-thread_3-13/5:<br>[2012-11-14 15:19:12] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:12] In event: NodeChildrenChanged<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:12] Thread-12 get an event.Path:/demo/1.1.1.3,state:SyncConnected,type:NodeDeleted<br>[2012-11-14 15:19:12] In event: NodeDeleted<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:12] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:12] In event: NodeChildrenChanged<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:12] SYSTEM VERSION: 1<br>[2012-11-14 15:19:12] SYSTEM VERSION: 1<br>[2012-11-14 15:19:12] Server count:0<br>[2012-11-14 15:19:12] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] End event: NodeChildrenChanged<br>[2012-11-14 15:19:12] SYSTEM VERSION: 1<br>[2012-11-14 15:19:12] Server count:0<br>[2012-11-14 15:19:12] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] End event: NodeChildrenChanged<br>[2012-11-14 15:19:12] Server count:0<br>[2012-11-14 15:19:12] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] End event: NodeDeleted<br>[2012-11-14 15:19:12] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:12] In event: NodeChildrenChanged<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:12] SYSTEM VERSION: 1<br>[2012-11-14 15:19:12] Server count:0<br>[2012-11-14 15:19:12] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:12] ================<br>[2012-11-14 15:19:12] End event: NodeChildrenChanged<br>[2012-11-14 15:19:16] ClientThread_ServerB@1.1.1.2-thread_1: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerA@1.1.1.1-thread_2: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerB@1.1.1.2-thread_0: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerA@1.1.1.1-thread_1: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerC@1.1.1.3-thread_0: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerA@1.1.1.1-thread_3: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerA@1.1.1.1-thread_0: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerA@1.1.1.1-thread_4: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerB@1.1.1.2-thread_3: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerC@1.1.1.3-thread_1: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerB@1.1.1.2-thread_2: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerB@1.1.1.2-thread_4: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerC@1.1.1.3-thread_2: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerC@1.1.1.3-thread_3: did not get server_count and modNum!!!<br>[2012-11-14 15:19:16] ClientThread_ServerC@1.1.1.3-thread_4: did not get server_count and modNum!!!<br>[2012-11-14 15:19:20] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:20] In event: NodeChildrenChanged<br>[2012-11-14 15:19:20] ================<br>[2012-11-14 15:19:20] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:20] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:20] In event: NodeChildrenChanged<br>[2012-11-14 15:19:20] ================<br>[2012-11-14 15:19:20] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:20] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:20] In event: NodeChildrenChanged<br>[2012-11-14 15:19:20] ================<br>[2012-11-14 15:19:20] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:20] SYSTEM VERSION: 1<br>[2012-11-14 15:19:20] SYSTEM VERSION: 1<br>[2012-11-14 15:19:20] SYSTEM VERSION: 1<br>[2012-11-14 15:19:20] Server count:1<br>Did not get the mod number for ServerC@1.1.1.3<br>[2012-11-14 15:19:20] Server count:1<br>[2012-11-14 15:19:20] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:20] ================<br>[2012-11-14 15:19:20] End event: NodeChildrenChanged<br>[2012-11-14 15:19:20] ServerA@1.1.1.1, mod=0,base=5<br>[2012-11-14 15:19:20] ClientThread_ServerA@1.1.1.1-thread_0:0/5<br>[2012-11-14 15:19:20] ClientThread_ServerA@1.1.1.1-thread_1:1/5<br>[2012-11-14 15:19:20] ClientThread_ServerA@1.1.1.1-thread_2:2/5<br>[2012-11-14 15:19:20] ClientThread_ServerA@1.1.1.1-thread_3:3/5<br>[2012-11-14 15:19:20] ClientThread_ServerA@1.1.1.1-thread_4:4/5<br>[2012-11-14 15:19:20] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:20] ================<br>[2012-11-14 15:19:20] End event: NodeChildrenChanged<br>Did not get the mod number for ServerB@1.1.1.2<br>[2012-11-14 15:19:20] Server count:1<br>[2012-11-14 15:19:20] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:20] ================<br>[2012-11-14 15:19:20] End event: NodeChildrenChanged<br>[2012-11-14 15:19:21] ClientThread_ServerB@1.1.1.2-thread_1-6/5:<br>[2012-11-14 15:19:21] ClientThread_ServerA@1.1.1.1-thread_0-0/5:5 10 15 20 25 30<br>[2012-11-14 15:19:21] ClientThread_ServerA@1.1.1.1-thread_2-2/5:2 7 12 17 22 27<br>[2012-11-14 15:19:21] ClientThread_ServerA@1.1.1.1-thread_1-1/5:1 6 11 16 21 26<br>[2012-11-14 15:19:21] ClientThread_ServerA@1.1.1.1-thread_3-3/5:3 8 13 18 23 28<br>[2012-11-14 15:19:21] ClientThread_ServerC@1.1.1.3-thread_0-10/5:<br>[2012-11-14 15:19:21] ClientThread_ServerB@1.1.1.2-thread_0-5/5:<br>[2012-11-14 15:19:21] ClientThread_ServerC@1.1.1.3-thread_1-11/5:<br>[2012-11-14 15:19:21] ClientThread_ServerB@1.1.1.2-thread_3-8/5:<br>[2012-11-14 15:19:21] ClientThread_ServerA@1.1.1.1-thread_4-4/5:4 9 14 19 24 29<br>[2012-11-14 15:19:21] ClientThread_ServerB@1.1.1.2-thread_2-7/5:<br>[2012-11-14 15:19:21] ClientThread_ServerC@1.1.1.3-thread_2-12/5:<br>[2012-11-14 15:19:21] ClientThread_ServerB@1.1.1.2-thread_4-9/5:<br>[2012-11-14 15:19:21] ClientThread_ServerC@1.1.1.3-thread_4-14/5:<br>[2012-11-14 15:19:21] ClientThread_ServerC@1.1.1.3-thread_3-13/5:<br>[2012-11-14 15:19:25] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:25] In event: NodeChildrenChanged<br>[2012-11-14 15:19:25] ================<br>[2012-11-14 15:19:25] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:25] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:25] In event: NodeChildrenChanged<br>[2012-11-14 15:19:25] ================<br>[2012-11-14 15:19:25] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:25] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:25] In event: NodeChildrenChanged<br>[2012-11-14 15:19:25] ================<br>[2012-11-14 15:19:25] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:25] SYSTEM VERSION: 1<br>[2012-11-14 15:19:25] SYSTEM VERSION: 1<br>[2012-11-14 15:19:25] SYSTEM VERSION: 1<br>[2012-11-14 15:19:25] Server count:2<br>[2012-11-14 15:19:25] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:25] ================<br>Did not get the mod number for ServerC@1.1.1.3<br>[2012-11-14 15:19:25] End event: NodeChildrenChanged<br>[2012-11-14 15:19:25] Server count:2<br>[2012-11-14 15:19:25] Server count:2<br>[2012-11-14 15:19:25] ServerB@1.1.1.2, mod=1,base=10<br>[2012-11-14 15:19:25] ClientThread_ServerB@1.1.1.2-thread_0:5/10<br>[2012-11-14 15:19:25] ClientThread_ServerB@1.1.1.2-thread_1:6/10<br>[2012-11-14 15:19:25] ClientThread_ServerB@1.1.1.2-thread_2:7/10<br>[2012-11-14 15:19:25] ClientThread_ServerB@1.1.1.2-thread_3:8/10<br>[2012-11-14 15:19:25] ClientThread_ServerB@1.1.1.2-thread_4:9/10<br>[2012-11-14 15:19:25] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:25] ================<br>[2012-11-14 15:19:25] End event: NodeChildrenChanged<br>[2012-11-14 15:19:25] ServerA@1.1.1.1, mod=0,base=10<br>[2012-11-14 15:19:25] ClientThread_ServerA@1.1.1.1-thread_0:0/10<br>[2012-11-14 15:19:25] ClientThread_ServerA@1.1.1.1-thread_1:1/10<br>[2012-11-14 15:19:25] ClientThread_ServerA@1.1.1.1-thread_2:2/10<br>[2012-11-14 15:19:25] ClientThread_ServerA@1.1.1.1-thread_3:3/10<br>[2012-11-14 15:19:25] ClientThread_ServerA@1.1.1.1-thread_4:4/10<br>[2012-11-14 15:19:25] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:25] ================<br>[2012-11-14 15:19:25] End event: NodeChildrenChanged<br>[2012-11-14 15:19:26] ClientThread_ServerA@1.1.1.1-thread_2-2/10:2 12 22<br>[2012-11-14 15:19:26] ClientThread_ServerA@1.1.1.1-thread_3-3/10:3 13 23<br>[2012-11-14 15:19:26] ClientThread_ServerA@1.1.1.1-thread_0-0/10:10 20 30<br>[2012-11-14 15:19:26] ClientThread_ServerA@1.1.1.1-thread_1-1/10:1 11 21<br>[2012-11-14 15:19:26] ClientThread_ServerC@1.1.1.3-thread_0-10/10:<br>[2012-11-14 15:19:26] ClientThread_ServerB@1.1.1.2-thread_0-5/10:5 15 25<br>[2012-11-14 15:19:26] ClientThread_ServerB@1.1.1.2-thread_1-6/10:6 16 26<br>[2012-11-14 15:19:26] ClientThread_ServerA@1.1.1.1-thread_4-4/10:4 14 24<br>[2012-11-14 15:19:26] ClientThread_ServerC@1.1.1.3-thread_1-11/10:<br>[2012-11-14 15:19:26] ClientThread_ServerB@1.1.1.2-thread_3-8/10:8 18 28<br>[2012-11-14 15:19:26] ClientThread_ServerB@1.1.1.2-thread_2-7/10:7 17 27<br>[2012-11-14 15:19:26] ClientThread_ServerB@1.1.1.2-thread_4-9/10:9 19 29<br>[2012-11-14 15:19:26] ClientThread_ServerC@1.1.1.3-thread_2-12/10:<br>[2012-11-14 15:19:26] ClientThread_ServerC@1.1.1.3-thread_4-14/10:<br>[2012-11-14 15:19:26] ClientThread_ServerC@1.1.1.3-thread_3-13/10:<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_1-1/10:1 11 21<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_0-0/10:10 20 30<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_0-5/10:5 15 25<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_0-10/10:<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_2-2/10:2 12 22<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_3-3/10:3 13 23<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_1-6/10:6 16 26<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_1-11/10:<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_4-4/10:4 14 24<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_3-8/10:8 18 28<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_2-7/10:7 17 27<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_4-9/10:9 19 29<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_2-12/10:<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_3-13/10:<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_4-14/10:<br>[2012-11-14 15:19:31] Thread-0 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:31] In event: NodeChildrenChanged<br>[2012-11-14 15:19:31] ================<br>[2012-11-14 15:19:31] ServerA@1.1.1.1:freshing…<br>[2012-11-14 15:19:31] Thread-12 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:31] In event: NodeChildrenChanged<br>[2012-11-14 15:19:31] ================<br>[2012-11-14 15:19:31] ServerC@1.1.1.3:freshing…<br>[2012-11-14 15:19:31] Thread-6 get an event.Path:/demo,state:SyncConnected,type:NodeChildrenChanged<br>[2012-11-14 15:19:31] In event: NodeChildrenChanged<br>[2012-11-14 15:19:31] ================<br>[2012-11-14 15:19:31] ServerB@1.1.1.2:freshing…<br>[2012-11-14 15:19:31] SYSTEM VERSION: 1<br>[2012-11-14 15:19:31] SYSTEM VERSION: 1<br>[2012-11-14 15:19:31] SYSTEM VERSION: 1<br>[2012-11-14 15:19:31] Server count:3<br>[2012-11-14 15:19:31] Server count:3<br>[2012-11-14 15:19:31] ServerA@1.1.1.1, mod=0,base=15<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_0:0/15<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_1:1/15<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_2:2/15<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_3:3/15<br>[2012-11-14 15:19:31] ClientThread_ServerA@1.1.1.1-thread_4:4/15<br>[2012-11-14 15:19:31] ServerA@1.1.1.1:end freshing…<br>[2012-11-14 15:19:31] ================<br>[2012-11-14 15:19:31] End event: NodeChildrenChanged<br>[2012-11-14 15:19:31] Server count:3<br>[2012-11-14 15:19:31] ServerC@1.1.1.3, mod=2,base=15<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_0:10/15<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_1:11/15<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_2:12/15<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_3:13/15<br>[2012-11-14 15:19:31] ClientThread_ServerC@1.1.1.3-thread_4:14/15<br>[2012-11-14 15:19:31] ServerC@1.1.1.3:end freshing…<br>[2012-11-14 15:19:31] ================<br>[2012-11-14 15:19:31] End event: NodeChildrenChanged<br>[2012-11-14 15:19:31] ServerB@1.1.1.2, mod=1,base=15<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_0:5/15<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_1:6/15<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_2:7/15<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_3:8/15<br>[2012-11-14 15:19:31] ClientThread_ServerB@1.1.1.2-thread_4:9/15<br>[2012-11-14 15:19:31] ServerB@1.1.1.2:end freshing…<br>[2012-11-14 15:19:31] ================<br>[2012-11-14 15:19:31] End event: NodeChildrenChanged<br>[2012-11-14 15:19:36] ClientThread_ServerB@1.1.1.2-thread_0-5/15:5 20<br>[2012-11-14 15:19:36] ClientThread_ServerA@1.1.1.1-thread_2-2/15:2 17<br>[2012-11-14 15:19:36] ClientThread_ServerA@1.1.1.1-thread_3-3/15:3 18<br>[2012-11-14 15:19:36] ClientThread_ServerC@1.1.1.3-thread_0-10/15:10 25<br>[2012-11-14 15:19:36] ClientThread_ServerA@1.1.1.1-thread_0-0/15:15 30<br>[2012-11-14 15:19:36] ClientThread_ServerA@1.1.1.1-thread_1-1/15:1 16<br>[2012-11-14 15:19:36] ClientThread_ServerB@1.1.1.2-thread_1-6/15:6 21<br>[2012-11-14 15:19:36] ClientThread_ServerC@1.1.1.3-thread_1-11/15:11 26<br>[2012-11-14 15:19:36] ClientThread_ServerB@1.1.1.2-thread_3-8/15:8 23<br>[2012-11-14 15:19:36] ClientThread_ServerA@1.1.1.1-thread_4-4/15:4 19<br>[2012-11-14 15:19:36] ClientThread_ServerB@1.1.1.2-thread_2-7/15:7 22<br>[2012-11-14 15:19:36] ClientThread_ServerC@1.1.1.3-thread_2-12/15:12 27<br>[2012-11-14 15:19:36] ClientThread_ServerB@1.1.1.2-thread_4-9/15:9 24<br>[2012-11-14 15:19:36] ClientThread_ServerC@1.1.1.3-thread_4-14/15:14 29<br>[2012-11-14 15:19:36] ClientThread_ServerC@1.1.1.3-thread_3-13/15:13 28<br>[2012-11-14 15:19:41] ClientThread_ServerC@1.1.1.3-thread_0-10/15:10 25<br>[2012-11-14 15:19:41] ClientThread_ServerA@1.1.1.1-thread_0-0/15:15 30<br>[2012-11-14 15:19:41] ClientThread_ServerB@1.1.1.2-thread_1-6/15:6 21<br>[2012-11-14 15:19:41] ClientThread_ServerA@1.1.1.1-thread_3-3/15:3 18<br>[2012-11-14 15:19:41] ClientThread_ServerB@1.1.1.2-thread_0-5/15:5 20<br>[2012-11-14 15:19:41] ClientThread_ServerA@1.1.1.1-thread_1-1/15:1 16<br>[2012-11-14 15:19:41] ClientThread_ServerA@1.1.1.1-thread_2-2/15:2 17<br>[2012-11-14 15:19:41] ClientThread_ServerB@1.1.1.2-thread_3-8/15:8 23<br>[2012-11-14 15:19:41] ClientThread_ServerB@1.1.1.2-thread_2-7/15:7 22<br>[2012-11-14 15:19:41] ClientThread_ServerA@1.1.1.1-thread_4-4/15:4 19<br>[2012-11-14 15:19:41] ClientThread_ServerC@1.1.1.3-thread_1-11/15:11 26<br>[2012-11-14 15:19:41] ClientThread_ServerC@1.1.1.3-thread_2-12/15:12 27<br>[2012-11-14 15:19:41] ClientThread_ServerB@1.1.1.2-thread_4-9/15:9 24<br>[2012-11-14 15:19:41] ClientThread_ServerC@1.1.1.3-thread_4-14/15:14 29<br>[2012-11-14 15:19:41] ClientThread_ServerC@1.1.1.3-thread_3-13/15:13 28</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/zookeeper/" rel="tag">#zookeeper</a>
+          
+            <a href="/tags/分布式协调/" rel="tag">#分布式协调</a>
+          
+            <a href="/tags/横向扩展/" rel="tag">#横向扩展</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/" rel="prev" title="将Hadoop RPC框架应用于多节点任务调度">
+                将Hadoop RPC框架应用于多节点任务调度 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2012/11/13/使用zookeeper协调多服务器的任务处理/"
+           data-title="使用zookeeper协调多服务器的任务处理" data-url="http://maohong.github.io/2012/11/13/使用zookeeper协调多服务器的任务处理/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="maohong" />
+          <p class="site-author-name" itemprop="name">maohong</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/maohong" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/maohong_V" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/hong.mao.758" target="_blank" title="Facebook">
+                  
+                    <i class="fa fa-fw fa-facebook"></i>
+                  
+                  Facebook
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.linkedin.com/in/mao-hong-1a129044" target="_blank" title="Linkedin">
+                  
+                    <i class="fa fa-fw fa-linkedin"></i>
+                  
+                  Linkedin
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/jacksonmh" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/maohong" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题"><span class="nav-number">2.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#demo"><span class="nav-number">4.</span> <span class="nav-text">demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证"><span class="nav-number">5.</span> <span class="nav-text">验证</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">maohong</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"maohongtech"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("NJQxhfae96k6xF1J7vNCdlb8-gzGzoHsz", "vmjAuBBlq8c8lVCxvWMxC5nr");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
