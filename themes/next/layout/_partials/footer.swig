@@ -1,3 +1,4 @@
+
 <div class="copyright" >
   {% set current = date(Date.now(), "YYYY") %}
   &copy; {% if theme.since and theme.since != current %} {{ theme.since }} - {% endif %}
@@ -18,3 +19,4 @@
     NexT.{{ theme.scheme }}
   </a>
 </div>
+
