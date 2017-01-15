@@ -301,7 +301,7 @@ facebook_sdk:
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn get AppID and AppKey.
 leancloud_visitors:
-  enable: false
+  enable: true
   app_id: NJQxhfae96k6xF1J7vNCdlb8-gzGzoHsz
   app_key: vmjAuBBlq8c8lVCxvWMxC5nr
 
@@ -319,7 +319,7 @@ busuanzi_count:
   site_pv_header: <i class="fa fa-eye"> 总访问量</i>
   site_pv_footer: 次
   # custom pv span for one page only
-  page_pv: true
+  page_pv: false
   page_pv_header: <i class="fa fa-file-o"> 阅读次数</i>
   page_pv_footer: 
 
