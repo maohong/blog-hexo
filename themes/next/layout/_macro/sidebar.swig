@@ -66,6 +66,7 @@
                 <span class="site-uv-sidebar">{{ theme.busuanzi_count.site_uv_header }}<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>{{ theme.busuanzi_count.site_uv_footer }}</span>
               {% endif %}
               {% if theme.busuanzi_count.site_pv %}
+                <br>
                 <span class="site-pv-sidebar">{{ theme.busuanzi_count.site_pv_header }}<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>{{ theme.busuanzi_count.site_pv_footer }}</span>
               {% endif %}            
             </div>

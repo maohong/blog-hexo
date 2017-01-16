@@ -1549,7 +1549,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #3c83ff;
+  background: #9c1fff;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2057,11 +2057,15 @@ a.search-result {
     display: none;
   }
 }
+.site-uv-sidebar,
+.site-pv-sidebar,
 .site-uv,
 .site-pv,
 .page-pv {
   display: inline-block;
 }
+.site-uv-sidebar .busuanzi-value,
+.site-pv-sidebar .busuanzi-value,
 .site-uv .busuanzi-value,
 .site-pv .busuanzi-value,
 .page-pv .busuanzi-value {

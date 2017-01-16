@@ -4,9 +4,9 @@
   <subtitle>Long way to go ...</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://maohong.github.io/"/>
+  <link href="http://maohong.tech/"/>
   <updated>2017-01-02T12:59:02.000Z</updated>
-  <id>http://maohong.github.io/</id>
+  <id>http://maohong.tech/</id>
   
   <author>
     <name>maohong</name>
@@ -17,8 +17,8 @@
   
   <entry>
     <title>storm源码编译及本地调试方法</title>
-    <link href="http://maohong.github.io/2016/07/13/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/"/>
-    <id>http://maohong.github.io/2016/07/13/storm源码编译及本地调试方法/</id>
+    <link href="http://maohong.tech/2016/07/13/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/"/>
+    <id>http://maohong.tech/2016/07/13/storm源码编译及本地调试方法/</id>
     <published>2016-07-13T15:53:12.000Z</published>
     <updated>2017-01-02T12:59:02.000Z</updated>
     
@@ -63,21 +63,21 @@
     
     </summary>
     
-      <category term="Storm" scheme="http://maohong.github.io/categories/Storm/"/>
+      <category term="Storm" scheme="http://maohong.tech/categories/Storm/"/>
     
     
-      <category term="storm" scheme="http://maohong.github.io/tags/storm/"/>
+      <category term="storm" scheme="http://maohong.tech/tags/storm/"/>
     
-      <category term="源码编译" scheme="http://maohong.github.io/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/"/>
+      <category term="源码编译" scheme="http://maohong.tech/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/"/>
     
-      <category term="本地调试" scheme="http://maohong.github.io/tags/%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95/"/>
+      <category term="本地调试" scheme="http://maohong.tech/tags/%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95/"/>
     
   </entry>
   
   <entry>
     <title>kafka-0.10.0启动过程分析</title>
-    <link href="http://maohong.github.io/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/"/>
-    <id>http://maohong.github.io/2016/07/08/kafka-0-10-0启动过程分析/</id>
+    <link href="http://maohong.tech/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/"/>
+    <id>http://maohong.tech/2016/07/08/kafka-0-10-0启动过程分析/</id>
     <published>2016-07-08T14:46:18.000Z</published>
     <updated>2016-07-09T13:05:27.000Z</updated>
     
@@ -139,19 +139,19 @@
     
     </summary>
     
-      <category term="Kafka" scheme="http://maohong.github.io/categories/Kafka/"/>
+      <category term="Kafka" scheme="http://maohong.tech/categories/Kafka/"/>
     
     
-      <category term="kafka" scheme="http://maohong.github.io/tags/kafka/"/>
+      <category term="kafka" scheme="http://maohong.tech/tags/kafka/"/>
     
-      <category term="源码分析" scheme="http://maohong.github.io/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+      <category term="源码分析" scheme="http://maohong.tech/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
     
   </entry>
   
   <entry>
     <title>Storm的消息可靠处理机制</title>
-    <link href="http://maohong.github.io/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"/>
-    <id>http://maohong.github.io/2015/11/05/Storm的消息可靠处理机制/</id>
+    <link href="http://maohong.tech/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/"/>
+    <id>http://maohong.tech/2015/11/05/Storm的消息可靠处理机制/</id>
     <published>2015-11-05T12:51:50.000Z</published>
     <updated>2016-07-09T08:40:03.000Z</updated>
     
@@ -208,19 +208,19 @@
     
     </summary>
     
-      <category term="Storm" scheme="http://maohong.github.io/categories/Storm/"/>
+      <category term="Storm" scheme="http://maohong.tech/categories/Storm/"/>
     
     
-      <category term="Storm" scheme="http://maohong.github.io/tags/Storm/"/>
+      <category term="Storm" scheme="http://maohong.tech/tags/Storm/"/>
     
-      <category term="实时计算" scheme="http://maohong.github.io/tags/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/"/>
+      <category term="实时计算" scheme="http://maohong.tech/tags/%E5%AE%9E%E6%97%B6%E8%AE%A1%E7%AE%97/"/>
     
   </entry>
   
   <entry>
     <title>Spark on yarn的内存分配问题</title>
-    <link href="http://maohong.github.io/2015/08/11/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/"/>
-    <id>http://maohong.github.io/2015/08/11/Spark-on-yarn的内存分配问题/</id>
+    <link href="http://maohong.tech/2015/08/11/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/"/>
+    <id>http://maohong.tech/2015/08/11/Spark-on-yarn的内存分配问题/</id>
     <published>2015-08-11T05:23:13.000Z</published>
     <updated>2016-07-09T08:38:58.000Z</updated>
     
@@ -313,21 +313,21 @@
     
     </summary>
     
-      <category term="Spark" scheme="http://maohong.github.io/categories/Spark/"/>
+      <category term="Spark" scheme="http://maohong.tech/categories/Spark/"/>
     
     
-      <category term="Spark" scheme="http://maohong.github.io/tags/Spark/"/>
+      <category term="Spark" scheme="http://maohong.tech/tags/Spark/"/>
     
-      <category term="Yarn" scheme="http://maohong.github.io/tags/Yarn/"/>
+      <category term="Yarn" scheme="http://maohong.tech/tags/Yarn/"/>
     
-      <category term="内存分配" scheme="http://maohong.github.io/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/"/>
+      <category term="内存分配" scheme="http://maohong.tech/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/"/>
     
   </entry>
   
   <entry>
     <title>storm集群supervisor节点异常退出问题排查</title>
-    <link href="http://maohong.github.io/2015/07/03/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
-    <id>http://maohong.github.io/2015/07/03/storm集群supervisor节点异常退出问题排查/</id>
+    <link href="http://maohong.tech/2015/07/03/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"/>
+    <id>http://maohong.tech/2015/07/03/storm集群supervisor节点异常退出问题排查/</id>
     <published>2015-07-03T12:48:50.000Z</published>
     <updated>2016-07-09T08:39:20.000Z</updated>
     
@@ -392,21 +392,21 @@
     
     </summary>
     
-      <category term="Storm" scheme="http://maohong.github.io/categories/Storm/"/>
+      <category term="Storm" scheme="http://maohong.tech/categories/Storm/"/>
     
     
-      <category term="Storm" scheme="http://maohong.github.io/tags/Storm/"/>
+      <category term="Storm" scheme="http://maohong.tech/tags/Storm/"/>
     
-      <category term="Supervisor" scheme="http://maohong.github.io/tags/Supervisor/"/>
+      <category term="Supervisor" scheme="http://maohong.tech/tags/Supervisor/"/>
     
-      <category term="异常排查" scheme="http://maohong.github.io/tags/%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5/"/>
+      <category term="异常排查" scheme="http://maohong.tech/tags/%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5/"/>
     
   </entry>
   
   <entry>
     <title>交换空间使用率过高问题分析</title>
-    <link href="http://maohong.github.io/2015/06/22/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
-    <id>http://maohong.github.io/2015/06/22/交换空间使用率过高问题分析/</id>
+    <link href="http://maohong.tech/2015/06/22/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+    <id>http://maohong.tech/2015/06/22/交换空间使用率过高问题分析/</id>
     <published>2015-06-22T02:02:04.000Z</published>
     <updated>2016-07-04T15:38:16.000Z</updated>
     
@@ -465,21 +465,21 @@
     
     </summary>
     
-      <category term="问题分析" scheme="http://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+      <category term="问题分析" scheme="http://maohong.tech/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
     
     
-      <category term="swap分区" scheme="http://maohong.github.io/tags/swap%E5%88%86%E5%8C%BA/"/>
+      <category term="swap分区" scheme="http://maohong.tech/tags/swap%E5%88%86%E5%8C%BA/"/>
     
-      <category term="问题分析" scheme="http://maohong.github.io/tags/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+      <category term="问题分析" scheme="http://maohong.tech/tags/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
     
-      <category term="Jvm调优" scheme="http://maohong.github.io/tags/Jvm%E8%B0%83%E4%BC%98/"/>
+      <category term="Jvm调优" scheme="http://maohong.tech/tags/Jvm%E8%B0%83%E4%BC%98/"/>
     
   </entry>
   
   <entry>
     <title>hadoop-yarn中ResourceManager的服务模块</title>
-    <link href="http://maohong.github.io/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/"/>
-    <id>http://maohong.github.io/2015/06/06/hadoop-yarn中ResourceManager的服务模块/</id>
+    <link href="http://maohong.tech/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/"/>
+    <id>http://maohong.tech/2015/06/06/hadoop-yarn中ResourceManager的服务模块/</id>
     <published>2015-06-06T05:10:10.000Z</published>
     <updated>2016-07-09T13:07:22.000Z</updated>
     
@@ -654,19 +654,19 @@
     
     </summary>
     
-      <category term="Hadoop" scheme="http://maohong.github.io/categories/Hadoop/"/>
+      <category term="Hadoop" scheme="http://maohong.tech/categories/Hadoop/"/>
     
     
-      <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
+      <category term="hadoop" scheme="http://maohong.tech/tags/hadoop/"/>
     
-      <category term="yarn" scheme="http://maohong.github.io/tags/yarn/"/>
+      <category term="yarn" scheme="http://maohong.tech/tags/yarn/"/>
     
   </entry>
   
   <entry>
     <title>mac系统下hadoop-2.7源码编译、导入eclipse及打包</title>
-    <link href="http://maohong.github.io/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/"/>
-    <id>http://maohong.github.io/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/</id>
+    <link href="http://maohong.tech/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/"/>
+    <id>http://maohong.tech/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/</id>
     <published>2015-05-18T02:00:44.000Z</published>
     <updated>2016-07-09T13:07:36.000Z</updated>
     
@@ -703,19 +703,19 @@
     
     </summary>
     
-      <category term="Hadoop" scheme="http://maohong.github.io/categories/Hadoop/"/>
+      <category term="Hadoop" scheme="http://maohong.tech/categories/Hadoop/"/>
     
     
-      <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
+      <category term="hadoop" scheme="http://maohong.tech/tags/hadoop/"/>
     
-      <category term="eclipse" scheme="http://maohong.github.io/tags/eclipse/"/>
+      <category term="eclipse" scheme="http://maohong.tech/tags/eclipse/"/>
     
   </entry>
   
   <entry>
     <title>使用hexo+gitpage搭建博客</title>
-    <link href="http://maohong.github.io/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
-    <id>http://maohong.github.io/2014/09/02/使用hexo-gitpage搭建博客/</id>
+    <link href="http://maohong.tech/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+    <id>http://maohong.tech/2014/09/02/使用hexo-gitpage搭建博客/</id>
     <published>2014-09-02T11:50:40.000Z</published>
     <updated>2016-07-03T13:31:31.000Z</updated>
     
@@ -738,19 +738,19 @@
     
     </summary>
     
-      <category term="工具" scheme="http://maohong.github.io/categories/%E5%B7%A5%E5%85%B7/"/>
+      <category term="工具" scheme="http://maohong.tech/categories/%E5%B7%A5%E5%85%B7/"/>
     
     
-      <category term="hexo" scheme="http://maohong.github.io/tags/hexo/"/>
+      <category term="hexo" scheme="http://maohong.tech/tags/hexo/"/>
     
-      <category term="gitpage" scheme="http://maohong.github.io/tags/gitpage/"/>
+      <category term="gitpage" scheme="http://maohong.tech/tags/gitpage/"/>
     
   </entry>
   
   <entry>
     <title>redis服务端连接断开问题诊断</title>
-    <link href="http://maohong.github.io/2014/06/01/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/"/>
-    <id>http://maohong.github.io/2014/06/01/redis服务端连接断开问题诊断/</id>
+    <link href="http://maohong.tech/2014/06/01/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/"/>
+    <id>http://maohong.tech/2014/06/01/redis服务端连接断开问题诊断/</id>
     <published>2014-06-01T13:29:28.000Z</published>
     <updated>2016-07-09T08:39:51.000Z</updated>
     
@@ -793,19 +793,19 @@
     
     </summary>
     
-      <category term="Redis" scheme="http://maohong.github.io/categories/Redis/"/>
+      <category term="Redis" scheme="http://maohong.tech/categories/Redis/"/>
     
     
-      <category term="redis" scheme="http://maohong.github.io/tags/redis/"/>
+      <category term="redis" scheme="http://maohong.tech/tags/redis/"/>
     
-      <category term="连接断开" scheme="http://maohong.github.io/tags/%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80/"/>
+      <category term="连接断开" scheme="http://maohong.tech/tags/%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80/"/>
     
   </entry>
   
   <entry>
     <title>基于zookeeper的分布式独占锁实现</title>
-    <link href="http://maohong.github.io/2014/05/13/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/"/>
-    <id>http://maohong.github.io/2014/05/13/基于zookeeper的分布式独占锁实现/</id>
+    <link href="http://maohong.tech/2014/05/13/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/"/>
+    <id>http://maohong.tech/2014/05/13/基于zookeeper的分布式独占锁实现/</id>
     <published>2014-05-13T13:05:01.000Z</published>
     <updated>2016-07-04T15:59:00.000Z</updated>
     
@@ -822,21 +822,21 @@
     
     </summary>
     
-      <category term="分布式应用" scheme="http://maohong.github.io/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+      <category term="分布式应用" scheme="http://maohong.tech/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
     
     
-      <category term="zookeeper" scheme="http://maohong.github.io/tags/zookeeper/"/>
+      <category term="zookeeper" scheme="http://maohong.tech/tags/zookeeper/"/>
     
-      <category term="分布式协调" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+      <category term="分布式协调" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
-      <category term="分布式应用" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+      <category term="分布式应用" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
     
   </entry>
   
   <entry>
     <title>使用httpclient引起的tcp连接数超高问题</title>
-    <link href="http://maohong.github.io/2014/03/28/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/"/>
-    <id>http://maohong.github.io/2014/03/28/使用httpclient引起的tcp连接数超高问题/</id>
+    <link href="http://maohong.tech/2014/03/28/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/"/>
+    <id>http://maohong.tech/2014/03/28/使用httpclient引起的tcp连接数超高问题/</id>
     <published>2014-03-28T09:44:58.000Z</published>
     <updated>2016-07-04T15:48:19.000Z</updated>
     
@@ -853,19 +853,19 @@
     
     </summary>
     
-      <category term="问题分析" scheme="http://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+      <category term="问题分析" scheme="http://maohong.tech/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
     
     
-      <category term="httpclient" scheme="http://maohong.github.io/tags/httpclient/"/>
+      <category term="httpclient" scheme="http://maohong.tech/tags/httpclient/"/>
     
-      <category term="tcp连接数" scheme="http://maohong.github.io/tags/tcp%E8%BF%9E%E6%8E%A5%E6%95%B0/"/>
+      <category term="tcp连接数" scheme="http://maohong.tech/tags/tcp%E8%BF%9E%E6%8E%A5%E6%95%B0/"/>
     
   </entry>
   
   <entry>
     <title>前后端的CharacterEncoding不一致导致提交的表单数据丢失问题</title>
-    <link href="http://maohong.github.io/2014/03/20/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/"/>
-    <id>http://maohong.github.io/2014/03/20/前后端的CharacterEncoding不一致导致提交的表单数据丢失问题/</id>
+    <link href="http://maohong.tech/2014/03/20/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/"/>
+    <id>http://maohong.tech/2014/03/20/前后端的CharacterEncoding不一致导致提交的表单数据丢失问题/</id>
     <published>2014-03-20T03:09:03.000Z</published>
     <updated>2016-07-04T16:11:10.000Z</updated>
     
@@ -897,19 +897,19 @@
     
     </summary>
     
-      <category term="问题分析" scheme="http://maohong.github.io/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
+      <category term="问题分析" scheme="http://maohong.tech/categories/%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/"/>
     
     
-      <category term="web开发" scheme="http://maohong.github.io/tags/web%E5%BC%80%E5%8F%91/"/>
+      <category term="web开发" scheme="http://maohong.tech/tags/web%E5%BC%80%E5%8F%91/"/>
     
-      <category term="java" scheme="http://maohong.github.io/tags/java/"/>
+      <category term="java" scheme="http://maohong.tech/tags/java/"/>
     
   </entry>
   
   <entry>
     <title>使用shell切割文件</title>
-    <link href="http://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/"/>
-    <id>http://maohong.github.io/2013/03/07/使用shell切割文件/</id>
+    <link href="http://maohong.tech/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/"/>
+    <id>http://maohong.tech/2013/03/07/使用shell切割文件/</id>
     <published>2013-03-07T05:49:44.000Z</published>
     <updated>2016-07-04T15:51:27.000Z</updated>
     
@@ -924,16 +924,16 @@
     </summary>
     
     
-      <category term="shell" scheme="http://maohong.github.io/tags/shell/"/>
+      <category term="shell" scheme="http://maohong.tech/tags/shell/"/>
     
-      <category term="linux" scheme="http://maohong.github.io/tags/linux/"/>
+      <category term="linux" scheme="http://maohong.tech/tags/linux/"/>
     
   </entry>
   
   <entry>
     <title>Shell中的IFS分隔符使用</title>
-    <link href="http://maohong.github.io/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/"/>
-    <id>http://maohong.github.io/2013/01/29/shell中的IFS分隔符/</id>
+    <link href="http://maohong.tech/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/"/>
+    <id>http://maohong.tech/2013/01/29/shell中的IFS分隔符/</id>
     <published>2013-01-29T12:41:54.000Z</published>
     <updated>2016-07-04T15:52:28.000Z</updated>
     
@@ -960,17 +960,17 @@
     
     </summary>
     
-      <category term="Shell" scheme="http://maohong.github.io/categories/Shell/"/>
+      <category term="Shell" scheme="http://maohong.tech/categories/Shell/"/>
     
     
-      <category term="shell" scheme="http://maohong.github.io/tags/shell/"/>
+      <category term="shell" scheme="http://maohong.tech/tags/shell/"/>
     
   </entry>
   
   <entry>
     <title>将Hadoop RPC框架应用于多节点任务调度</title>
-    <link href="http://maohong.github.io/2013/01/21/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
-    <id>http://maohong.github.io/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/</id>
+    <link href="http://maohong.tech/2013/01/21/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+    <id>http://maohong.tech/2013/01/21/将Hadoop-RPC框架应用于多节点任务调度/</id>
     <published>2013-01-21T12:53:38.000Z</published>
     <updated>2016-07-09T13:04:59.000Z</updated>
     
@@ -1325,23 +1325,23 @@
     
     </summary>
     
-      <category term="Hadoop" scheme="http://maohong.github.io/categories/Hadoop/"/>
+      <category term="Hadoop" scheme="http://maohong.tech/categories/Hadoop/"/>
     
     
-      <category term="hadoop" scheme="http://maohong.github.io/tags/hadoop/"/>
+      <category term="hadoop" scheme="http://maohong.tech/tags/hadoop/"/>
     
-      <category term="分布式应用" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+      <category term="分布式应用" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
     
-      <category term="RPC" scheme="http://maohong.github.io/tags/RPC/"/>
+      <category term="RPC" scheme="http://maohong.tech/tags/RPC/"/>
     
-      <category term="任务调度" scheme="http://maohong.github.io/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
+      <category term="任务调度" scheme="http://maohong.tech/tags/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/"/>
     
   </entry>
   
   <entry>
     <title>使用zookeeper协调多服务器的任务处理</title>
-    <link href="http://maohong.github.io/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
-    <id>http://maohong.github.io/2012/11/13/使用zookeeper协调多服务器的任务处理/</id>
+    <link href="http://maohong.tech/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/"/>
+    <id>http://maohong.tech/2012/11/13/使用zookeeper协调多服务器的任务处理/</id>
     <published>2012-11-13T08:16:43.000Z</published>
     <updated>2016-07-09T08:47:05.000Z</updated>
     
@@ -1371,14 +1371,14 @@
     
     </summary>
     
-      <category term="分布式应用" scheme="http://maohong.github.io/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+      <category term="分布式应用" scheme="http://maohong.tech/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
     
     
-      <category term="zookeeper" scheme="http://maohong.github.io/tags/zookeeper/"/>
+      <category term="zookeeper" scheme="http://maohong.tech/tags/zookeeper/"/>
     
-      <category term="横向扩展" scheme="http://maohong.github.io/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
+      <category term="横向扩展" scheme="http://maohong.tech/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
     
-      <category term="分布式协调" scheme="http://maohong.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+      <category term="分布式协调" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
   </entry>
   

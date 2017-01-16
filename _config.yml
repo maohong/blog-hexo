@@ -13,7 +13,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://maohong.github.io
+url: http://maohong.tech
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -70,8 +70,11 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:maohong/maohong.github.io.git
-  branch: master
+  repo:
+    github: git@github.com:maohong/maohong.github.io.git,master
+    coding: git@git.coding.net:maohong/maohong.git,master 
+  #repository: git@github.com:maohong/maohong.github.io.git
+  #branch: master
 
 # Baidu Analytics ID
 baidu_analytics: 9c95fa7980a3758aa72daefb9e05734c

@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[storm源码编译及本地调试方法]]></title>
-      <url>http://maohong.github.io/2016/07/13/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/</url>
+      <url>http://maohong.tech/2016/07/13/storm%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%8F%8A%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/</url>
       <content type="html"><![CDATA[<h2 id="基础环境"><a href="#基础环境" class="headerlink" title="基础环境"></a>基础环境</h2><ul>
 <li>IDE开发环境：intelliJIdea</li>
 <li>JDK1.7  64bit</li>
@@ -32,7 +32,7 @@
     
     <entry>
       <title><![CDATA[kafka-0.10.0启动过程分析]]></title>
-      <url>http://maohong.github.io/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</url>
+      <url>http://maohong.tech/2016/07/08/kafka-0-10-0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/</url>
       <content type="html"><![CDATA[<p>kafka-0.10.0是官方出的最新稳定版本，提供了大量新的feature，具体可见<a href="http://www.iteblog.com/archives/1677" target="_blank" rel="external">这里</a>，本文主要分析kafka-0.10-0的源码结构和启动过程。</p>
 <h2 id="源码结构"><a href="#源码结构" class="headerlink" title="源码结构"></a>源码结构</h2><p>kafka-0.10.0的源码可以从github上fork一份，在源码目录下执行./gradlew idea生成idea项目，然后导入idea即可。这中间需要使用gradle进行依赖包的下载，导入后可以看到其源码结构如下图所示：</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20160708-kafka0.10.0%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90/1.png" alt=""></p>
@@ -79,7 +79,7 @@
     
     <entry>
       <title><![CDATA[Storm的消息可靠处理机制]]></title>
-      <url>http://maohong.github.io/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</url>
+      <url>http://maohong.tech/2015/11/05/Storm%E7%9A%84%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6/</url>
       <content type="html"><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。</p>
 <p>Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保证spout产生的消息的可靠处理，需要做到两点：</p>
 <p>第一是spout/bolt每生成一个新的tuple都告诉storm一下（其中spout发出的tuple有个id叫rootId），从而让storm能够追踪rootId和每个衍生tuple的处理状态。</p>
@@ -125,7 +125,7 @@
     
     <entry>
       <title><![CDATA[Spark on yarn的内存分配问题]]></title>
-      <url>http://maohong.github.io/2015/08/11/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/</url>
+      <url>http://maohong.tech/2015/08/11/Spark-on-yarn%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在测试spark on yarn时，发现一些内存分配上的问题，具体如下。</p>
 <p>在$SPARK_HOME/conf/spark-env.sh中配置如下参数：</p>
 <blockquote>
@@ -186,7 +186,7 @@
     
     <entry>
       <title><![CDATA[storm集群supervisor节点异常退出问题排查]]></title>
-      <url>http://maohong.github.io/2015/07/03/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</url>
+      <url>http://maohong.tech/2015/07/03/storm%E9%9B%86%E7%BE%A4supervisor%E8%8A%82%E7%82%B9%E5%BC%82%E5%B8%B8%E9%80%80%E5%87%BA%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/</url>
       <content type="html"><![CDATA[<h2 id="问题出现"><a href="#问题出现" class="headerlink" title="问题出现"></a>问题出现</h2><p>测试storm集群为0.9.4版本，前段时间出现supervisor进程挂掉，而其上work进程仍然运行的诡异情况，通过日志看到supervisor进程挂掉之前出现以下异常：</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150701/1.png" alt=""></p>
 <h2 id="问题排查过程"><a href="#问题排查过程" class="headerlink" title="问题排查过程"></a>问题排查过程</h2><p>很明显，是commons-io包的FileUtils工具类抛出的异常，原因是在调用commons-io包的FileUtils工具类做move directory操作时，目的文件夹已存在。</p>
@@ -230,7 +230,7 @@
     
     <entry>
       <title><![CDATA[交换空间使用率过高问题分析]]></title>
-      <url>http://maohong.github.io/2015/06/22/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
+      <url>http://maohong.tech/2015/06/22/%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/</url>
       <content type="html"><![CDATA[<h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>线上两台java后台服务每次上线后再过段时间，就出现swap空间使用率较高的现象，而jvm内存使用和垃圾回收情况则很正常。相关图表如下：</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150622%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98%E9%97%AE%E9%A2%98/1.png" alt=""></p>
 <p>图中，每次上线后过一段时间，swap空间使用量会出现一个陡增，并随时间推移逐渐增加，期间会出现小幅度下降。</p>
@@ -268,7 +268,7 @@
     
     <entry>
       <title><![CDATA[hadoop-yarn中ResourceManager的服务模块]]></title>
-      <url>http://maohong.github.io/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</url>
+      <url>http://maohong.tech/2015/06/06/hadoop-yarn%E4%B8%ADResourceManager%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9D%97/</url>
       <content type="html"><![CDATA[<h2 id="Yarn简述"><a href="#Yarn简述" class="headerlink" title="Yarn简述"></a>Yarn简述</h2><p>Hadoop2.0引入了yarn（Yet Another Resource Negotiator）资源管理框架。1.0中的MapReduce计算框架变为运行在yarn上的一种application。</p>
 <p>Yarn依然采用了master/slave结构，master是ResourceManager，负责整个集群的资源管理和调度，并且支持HA，slave是NodeManager，负责管理各子节点上的资源和任务。每个MapReduce作业提交给ResourceManager并被接受后，ResourceManager会通知某个NodeManager启动一个ApplicationMaster管理此作业的生命周期。</p>
 <h2 id="ResourceManager中的模块划分"><a href="#ResourceManager中的模块划分" class="headerlink" title="ResourceManager中的模块划分"></a>ResourceManager中的模块划分</h2><p>Yarn中的大多数服务都是带状态的service实现，并通过事件驱动机制实现服务的状态转换和服务之间的交互。ResourceManager是yarn的核心组件，与NodeManager、ApplicationMaster、Client都有交互，提供了非常多的功能，下面基于hadoop2.7版本的实现，梳理一下ResourceManager中的重要service组件及其功能。</p>
@@ -437,7 +437,7 @@
     
     <entry>
       <title><![CDATA[mac系统下hadoop-2.7源码编译、导入eclipse及打包]]></title>
-      <url>http://maohong.github.io/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/</url>
+      <url>http://maohong.tech/2015/05/18/mac%E7%B3%BB%E7%BB%9F%E4%B8%8Bhadoop-2-7%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AF%BC%E5%85%A5eclipse%E5%8F%8A%E6%89%93%E5%8C%85/</url>
       <content type="html"><![CDATA[<h2 id="编译环境要求"><a href="#编译环境要求" class="headerlink" title="编译环境要求"></a>编译环境要求</h2><blockquote>
 <p>JDK1.7+<br>MAVEN 3.0以上版本<br>如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。</p>
 </blockquote>
@@ -467,7 +467,7 @@
     
     <entry>
       <title><![CDATA[使用hexo+gitpage搭建博客]]></title>
-      <url>http://maohong.github.io/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
+      <url>http://maohong.tech/2014/09/02/%E4%BD%BF%E7%94%A8hexo-gitpage%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/</url>
       <content type="html"><![CDATA[<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>系统：mac osx<br>软件：Node.js，npm，git，hexo<br>具体安装以及git与github打通的配置就不详述了，可以google到各种方法。  </p>
 <h2 id="hexo命令"><a href="#hexo命令" class="headerlink" title="hexo命令"></a>hexo命令</h2><p>hexo init &lt;folder&gt;  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #表示执行init命令初始化hexo到你指定的目录  </p>
 <p><font color="red">以下命令需要在&lt;folder&gt;目录下执行：</font><br>hexo generate  &nbsp;&nbsp;&nbsp;#自动根据当前目录下文件,生成静态网页<br>hexo server &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#运行本地服务  </p>
@@ -484,7 +484,7 @@
     
     <entry>
       <title><![CDATA[redis服务端连接断开问题诊断]]></title>
-      <url>http://maohong.github.io/2014/06/01/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</url>
+      <url>http://maohong.tech/2014/06/01/redis%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD/</url>
       <content type="html"><![CDATA[<h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。</p>
 <blockquote>
 <p>redis.clients.jedis.exceptions.JedisConnectionException: It seems like server has closed the connection.<br>at redis.clients.util.RedisInputStream.readLine(RedisInputStream.java:90) ~[jedis-2.1.0.jar:na]<br>at redis.clients.jedis.Protocol.processInteger(Protocol.java:110) ~[jedis-2.1.0.jar:na]<br>at redis.clients.jedis.Protocol.process(Protocol.java:70) ~[jedis-2.1.0.jar:na]<br>at redis.clients.jedis.Protocol.read(Protocol.java:131) ~[jedis-2.1.0.jar:na]<br>at redis.clients.jedis.Connection.getIntegerReply(Connection.java:188) ~[jedis-2.1.0.jar:na]<br>at redis.clients.jedis.Jedis.sismember(Jedis.java:1266) ~[jedis-2.1.0.jar:na]</p>
@@ -521,7 +521,7 @@
     
     <entry>
       <title><![CDATA[基于zookeeper的分布式独占锁实现]]></title>
-      <url>http://maohong.github.io/2014/05/13/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/</url>
+      <url>http://maohong.tech/2014/05/13/%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/</url>
       <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在分布式系统中，经常遇到这样一种场景：选举一个节点执行某一个任务，当此节点宕机后，其他节点可以接管并继续执行这个任务。由于各个节点运行的代码是一样的，彼此之间也是平等的，各个节点如何可以知道自己是否可以执行这个任务呢？当有节点宕机时，又如何判断自己是否可以接管任务呢？在我们的分布式任务调度系统中，需要选取调度器集群中的一个节点进行轮询任务状态，这里使用了zookeeper来实现一个统一的分布式锁，从而选出轮询节点。</p>
 <h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>如图所示，每台服务器启动后，都在同一目录下建一个临时顺序节点（EPHEMERAL_SEQUENTIAL），并获取此目录下的所有节点信息，如果自己的序号是最小的，就认为获取到了锁，可以执行任务。若自己的节点不是最小的，就认为自己没有获取到锁，不执行任务，同时，在比自己小1个序号的节点上增加监听。当比自己小1个序号的节点发生变化的时候，再次检查自己是否是最小序号的节点，如果是则获取锁，否则继续监听比自己小1个序号的节点。</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20140502-%E5%9F%BA%E4%BA%8Ezookeeper%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%8B%AC%E5%8D%A0%E9%94%81%E5%AE%9E%E7%8E%B0/1.jpg" alt=""></p>
@@ -532,7 +532,7 @@
     
     <entry>
       <title><![CDATA[使用httpclient引起的tcp连接数超高问题]]></title>
-      <url>http://maohong.github.io/2014/03/28/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/</url>
+      <url>http://maohong.tech/2014/03/28/%E4%BD%BF%E7%94%A8httpclient%E5%BC%95%E8%B5%B7%E7%9A%84tcp%E8%BF%9E%E6%8E%A5%E6%95%B0%E8%B6%85%E9%AB%98%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<p>组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，<font color="red">峰值能达到几万个tcp连接数！</font></p>
 <p>排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpClient()操作，这个操作内部默认使用的是SimpleHttpConnectionManager来管理http连接，而SimpleHttpConnectionManager有个默认字段alwaysClose=false，表示当外部程序调用了HttpMethod.releaseConnection()时并不会立即释放连接，而是保持这个连接并尝试用于后续的请求，在连接空闲一段时间后（默认3秒）才真正释放。</p>
 <p>因此，当业务量较大，<font color="red">系统高并发发送post请求时，new出来的HttpClient对象会很多，而这个对象使用完毕后，而当中建立的client对象在短时间内并不会立即释放连接</font>，因此，随着时间的积累，tcp连接数保持居高不下。</p>
@@ -543,7 +543,7 @@
     
     <entry>
       <title><![CDATA[前后端的CharacterEncoding不一致导致提交的表单数据丢失问题]]></title>
-      <url>http://maohong.github.io/2014/03/20/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/</url>
+      <url>http://maohong.tech/2014/03/20/%E5%89%8D%E5%90%8E%E7%AB%AF%E7%9A%84CharacterEncoding%E4%B8%8D%E4%B8%80%E8%87%B4%E5%AF%BC%E8%87%B4%E6%8F%90%E4%BA%A4%E7%9A%84%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98/</url>
       <content type="html"><![CDATA[<p>最近在开发分布式任务调度系统的web端时，遇到一个坑，记录如下：</p>
 <p>在页面上新增和修改任务，提交后，任务的属性在后端怎么都接收不到，但是在另一个协同开发的同学那边本地调试就OK，在我的本地和公共开发环境都不行，这不合理啊。。。。。</p>
 <p>排查了很多地方，js、setter等等，一直没发现问题在哪。跟负责前端的同学交流了下，发现前端post的数据确实是修改过的，也就是后端接收有问题。</p>
@@ -567,7 +567,7 @@
     
     <entry>
       <title><![CDATA[使用shell切割文件]]></title>
-      <url>http://maohong.github.io/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/</url>
+      <url>http://maohong.tech/2013/03/07/%E4%BD%BF%E7%94%A8shell%E5%88%87%E5%89%B2%E6%96%87%E4%BB%B6/</url>
       <content type="html"><![CDATA[<p>最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是part-00000、part-00001，但若pig脚本中不指定reduce任务数，产生的结果文件个数是3个，而且下下来之后需要进行重命名。与其这样还不如自己处理。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">rm -rf $TODAY_ALL_INDUSKEY</div><div class="line">	for allName in `find $TODAY_ALL_TMP_DIR -name "part-*"`</div><div class="line">		do</div><div class="line">			INFO "Processing result file" $allName</div><div class="line">			cat $allName &gt;&gt; $TODAY_ALL_INDUSKEY   #把结果文件重定向到一个文件</div><div class="line">	done</div><div class="line"></div><div class="line">	ALL_INDUSKEY_FILE_NUM=10    #拆分的文件数量</div><div class="line">	ALL_KEY_LINES=0             #结果文件行数</div><div class="line">	INFO "Split $TODAY_ALL_INDUSKEY into $ALL_INDUSKEY_FILE_NUM files"</div><div class="line">	for str in `wc -l $TODAY_ALL_INDUSKEY`;	do</div><div class="line">		t=`expr match $str "[1-9][0-9]*$"`;</div><div class="line">		if [ $t -gt 0 ]; then</div><div class="line">			ALL_KEY_LINES=$str         #获取结果文件行数</div><div class="line">			INFO "Line of $TODAY_ALL_INDUSKEY is $ALL_KEY_LINES"</div><div class="line">		fi</div><div class="line">	done</div><div class="line">	if [ $ALL_KEY_LINES -ne 0 ]; then</div><div class="line">		tmpLine=`echo "scale=2;$ALL_KEY_LINES/$ALL_INDUSKEY_FILE_NUM"|bc`    #每个小文件的行数，保留两位小数</div><div class="line">		INFO "$ALL_KEY_LINES/$ALL_INDUSKEY_FILE_NUM=$tmpLine"</div><div class="line">		subFileLines=`echo $(($&#123;tmpLine//.*/+1&#125;))`        #向上取整</div><div class="line">		INFO "Per subfile lines:$subFileLines"</div><div class="line">		split -l $subFileLines -a 1 -d $TODAY_ALL_INDUSKEY $TODAY_ALL_INDUSKEY"_"      #拆分文件</div><div class="line">	fi</div><div class="line"></div><div class="line">	if [ -f $TODAY_ALL_INDUSKEY ]; then</div><div class="line">		touch $TODAY_ALL_INDUSKEY.done       #创建done文件</div><div class="line">		rm -rf $TODAY_ALL_TMP_DIR</div><div class="line">		INFO "Process result file dir $TODAY_ALL_TMP_DIR done!"</div><div class="line">	fi</div></pre></td></tr></table></figure>
 ]]></content>
@@ -575,7 +575,7 @@
     
     <entry>
       <title><![CDATA[Shell中的IFS分隔符使用]]></title>
-      <url>http://maohong.github.io/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</url>
+      <url>http://maohong.tech/2013/01/29/shell%E4%B8%AD%E7%9A%84IFS%E5%88%86%E9%9A%94%E7%AC%A6/</url>
       <content type="html"><![CDATA[<p>在linux中，shell把每个 $IFS 字符对待成一个分隔符，且基于这些字符把其他扩展的结果分割。</p>
 <p>工作中需要处理一个文件datafile，文件中有好几列，列与列之间以‘\3′分割，如下(终端下’\3′显示为方块)：</p>
 <p><img src="https://raw.githubusercontent.com/maohong/picture/master/20130129/shell.png" alt=""></p>
@@ -594,7 +594,7 @@
     
     <entry>
       <title><![CDATA[将Hadoop RPC框架应用于多节点任务调度]]></title>
-      <url>http://maohong.github.io/2013/01/21/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/</url>
+      <url>http://maohong.tech/2013/01/21/%E5%B0%86Hadoop-RPC%E6%A1%86%E6%9E%B6%E5%BA%94%E7%94%A8%E4%BA%8E%E5%A4%9A%E8%8A%82%E7%82%B9%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6/</url>
       <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在hadoop中，主从节点之间保持着心跳通信，用于传输节点状态信息、任务调度信息以及节点动作信息等等。 hdfs的namenode与datanode，mapreduce的jobtracker与tasktracker，hbase的hmaster与 regionserver之间的通信，都是基于hadoop RPC。Hadoop RPC是hadoop里非常基础的通信框架。hadoop 2.0以前hadoop RPC的数据序列化是通过实现自己定义的Writable接口实现，而从hadoop 2.0开始，数据的序列化工作交给了ProtocolBuffer去做。关于Hadoop RPC的实现原理已经有很多文章进行了详细的介绍（<a href="http://weixiaolu.iteye.com/blog/1504898" target="_blank" rel="external">源码级强力分析hadoop的RPC机制</a>，<a href="http://yanbohappy.sinaapp.com/?p=110" target="_blank" rel="external">Hadoop基于Protocol Buffer的RPC实现代码分析-Server端</a>，<a href="http://yanbohappy.sinaapp.com/?p=115" target="_blank" rel="external">带有HA功能的Hadoop Client端RPC实现原理与代码分析</a>），这里就不在赘述了。下面就直接引入问题和方案吧。  </p>
 <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>工作中经常需要在定时任务系统上写一些定时任务，随着业务规模的增长和扩大，需要定时处理的任务越来越多，任务之间的执行间隔越来越小，某一时间段内（比如0点、整点或半点）执行的任务会越来越密集，只在一台机器上执行这些任务的话，会出现较大的风险：  </p>
 <ul>
@@ -933,7 +933,7 @@
     
     <entry>
       <title><![CDATA[使用zookeeper协调多服务器的任务处理]]></title>
-      <url>http://maohong.github.io/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</url>
+      <url>http://maohong.tech/2012/11/13/%E4%BD%BF%E7%94%A8zookeeper%E5%8D%8F%E8%B0%83%E5%A4%9A%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%BB%BB%E5%8A%A1%E5%A4%84%E7%90%86/</url>
       <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p><strong>Zookeeper</strong>是hadoop的子项目，是google的chubby的开源实现，是一个针对大规模分布式系统的可靠的分布式协调系统。Zookeeper一般部署在一个集群上，通过在集群间维护一个数据树，使得连接到集群的client能够获得统一的数据信息，比如系统公共配置信息、节点存活状态等等。因此，在互联网公司中，zookeeper被广泛运用于统一配置管理、名字服务、分布式同步等。</p>
 <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>我们看下这样一种场景：<br>前台系统每时每刻都生成大量数据，这些原生数据由后台系统处理完毕后再作他用，我们暂且不谈这些数据的存储形式，只关注如何能够尽可能高效的处理。举个例子，前台系统可能是微博的前端发布系统、搜索引擎上的广告投放系统，或者是任务发布系统，后台系统则可能是对微博和广告信息的审查系统，比如用户发的微博如果包含近期敏感信息则不予显示，若是任务，后台系统则负责处理任务具体的执行。<br>若数据量和任务量较小，单节点的后台系统或许可以处理得过来，但是如果数据量和任务量很大（比如新浪微博，龙年正月初一0点0分0秒，共有32312条微博同时发布），单节点的后台系统肯定吃不消，这时候，可想而知的是多节点同时处理前台过来的数据。<br>最简单的方法是，按消息id对后台节点数取模（msgid%server_num=mod），每个后台节点取自己那份数据进行处理，这就需要每个节点都知晓当前有多少个后台节点以及本节点所应取的mod数。但是，当某个节点宕机时，这个节点所应处理的数据无法被继续处理了，势必会造成阻塞，除非重新配置各节点上的参数，将节点数server_num减1，并修改各节点取数据的mod数。<br>毋庸置疑，这样非常麻烦！如果能够将这种配置信息（实际上是数据在节点间分配的控制信息）统一管理起来，在配置信息发生变化时，各个后台节点能够及时知晓其变化，就可以避免上述情况的发生。<br>因此，采用多节点处理数据时，有两个问题：<br>1.避免多个节点重复处理同一条数据，否则造成资源浪费。<br>2.不能有数据被遗漏处理，尤其是在有后台节点down掉的时候。<br>也就是说，采用多节点同时处理数据时，需要将数据隔离开，分别给不同的节点处理，而且在有节点宕机的情况下，所有数据也必须可以无误的被其他可用节点处理。如何做到这一点呢，使用zookeeper吧！<br><a id="more"></a></p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>我们通过zookeeper维护一个目录（比如/app/config），服务器启动时连接zookeeper集群并在该目录下创建表示自己的临时节点（CreateMode.EPHEMERAL），相当于注册一个节点，节点名可以是本服务器的ip，节点的值为该服务器的mod值，按注册顺序从0递增，即第一个注册的节点值为0，第二个为1，依次下去，因此/app/config的子节点数就是注册到zookeeper的服务器数。同时，各服务器监听/app/config目录，当其发生变化（新加入子节点、子节点失效等）时，每个服务器都将获取到这个事件并进行相应的处理。  </p>
