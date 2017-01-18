@@ -74,6 +74,8 @@
 
 
 
+  <link rel="alternate" href="/atom.xml" title="tech.tech" type="application/atom+xml" />
+
 
 
 
@@ -94,7 +96,7 @@ Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，�
 Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，我们在写一个topology程序时，若需要保">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20151105/bolt-executor.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20151105/storm-ack.png">
-<meta property="og:updated_time" content="2017-01-18T09:54:11.733Z">
+<meta property="og:updated_time" content="2016-07-09T08:40:03.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Storm的消息可靠处理机制">
 <meta name="twitter:description" content="简介提交进入Storm运行的topology实际上是一个有向无环图（DAG），其中的节点是由spout和bolt组成，边则可以理解为消息从一个节点到传输到另一个节点的过程。对于spout产生的tuple，只有在topology上处理完毕后，才认为这个tuple被storm可靠处理。
@@ -576,6 +578,13 @@ Storm提供了可靠处理消息（storm中的通用名叫tuple）的框架，�
             </div>
         
 
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
         
 
         <div class="links-of-author motion-element">
