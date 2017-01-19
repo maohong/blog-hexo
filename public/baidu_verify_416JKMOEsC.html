@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hadoop,eclipse," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -86,33 +86,16 @@
 
 
 
-<meta name="description" content="编译环境要求
-JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。
-
-编译方法解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。
-
-仅编译：mv">
-<meta property="og:type" content="article">
-<meta property="og:title" content="mac系统下hadoop-2.7源码编译、导入eclipse及打包">
-<meta property="og:url" content="http://maohong.tech/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/index.html">
+<meta name="description" content="416JKMOEsC">
+<meta property="og:type" content="website">
+<meta property="og:title" content="tech.tech">
+<meta property="og:url" content="http://maohong.tech/baidu_verify_416JKMOEsC.html">
 <meta property="og:site_name" content="tech.tech">
-<meta property="og:description" content="编译环境要求
-JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。
-
-编译方法解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。
-
-仅编译：mv">
-<meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png">
-<meta property="og:updated_time" content="2016-07-09T13:07:36.000Z">
+<meta property="og:description" content="416JKMOEsC">
+<meta property="og:updated_time" content="2017-01-14T09:05:40.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mac系统下hadoop-2.7源码编译、导入eclipse及打包">
-<meta name="twitter:description" content="编译环境要求
-JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。
-
-编译方法解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。
-
-仅编译：mv">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png">
+<meta name="twitter:title" content="tech.tech">
+<meta name="twitter:description" content="416JKMOEsC">
 
 
 
@@ -130,7 +113,13 @@ JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6�
   };
 </script>
 
-  <title> mac系统下hadoop-2.7源码编译、导入eclipse及打包 | tech.tech </title>
+  <title>
+  
+
+  
+     | tech.tech
+  
+</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -161,7 +150,7 @@ JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6�
     
   
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+  <div class="container one-collumn sidebar-position-left  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -294,203 +283,21 @@ JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6�
 
   <div id="posts" class="posts-expand">
     
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
     
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                mac系统下hadoop-2.7源码编译、导入eclipse及打包
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2015-05-18T10:00:44+08:00" content="2015-05-18">
-              2015-05-18
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Hadoop/" itemprop="url" rel="index">
-                    <span itemprop="name">Hadoop</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/" class="leancloud_visitors" data-flag-title="mac系统下hadoop-2.7源码编译、导入eclipse及打包">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
+      416JKMOEsC
     
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <h2 id="编译环境要求"><a href="#编译环境要求" class="headerlink" title="编译环境要求"></a>编译环境要求</h2><blockquote>
-<p>JDK1.7+<br>MAVEN 3.0以上版本<br>如果需要编译native code，还需要CMake 2.6、Zlib devel、openssl devel（mac下一般安装了xcode后应该都会有这些包）。</p>
-</blockquote>
-<h2 id="编译方法"><a href="#编译方法" class="headerlink" title="编译方法"></a>编译方法</h2><p>解压源码包hadoop-2.7.0-src.tar.gz，iterm下进入文件夹hadoop-2.7.0-src，然后根据需要执行相应的mvn命令就可以了。</p>
-<blockquote>
-<p>仅编译：mvn compile<br>打包生成jar：mvn package<br>生成eclipse项目：eclipse:eclipse -DskipTests，加上-DskipTests可跳过test阶段。</p>
-</blockquote>
-<p>期间遇到几个问题，记录如下。</p>
-<h2 id="问题记录"><a href="#问题记录" class="headerlink" title="问题记录"></a>问题记录</h2><p>先执行mvn eclipse:eclipse -DskipTest生成eclipse项目，执行到一半时，提示下面的报错：</p>
-<font color="red">‘protoc –version’ did not return a version -&gt; [Help 1]</font>
-
-<p>意思也就是是找不到protoc命令，安装protocolbuffer后重试，又提示错误：</p>
-<font color="red">protoc version is ‘libprotoc 2.6.1′, expected version is ’2.5.0′</font>
-
-<p>看上去是protocolbuffer版本问题，hadoop需要的版本是2.5.0，而系统安装的是2.6.1，查了很多资料，都是说protocolbuffer版本太低后来升到2.5的，而我这是2.6.1的版本，难不成还得降回去，不至于吧。因此，猜测这个版本限制是在pom.xml中写死的，于是grep了一下，发现果然在hadoop-project/pom.xml中配置了编译时使用的pb版本。</p>
-<font color="red">\<protobuf.version>2.5.0\</protobuf.version></font>
-
-<p>把以上配置项改为2.6.1，再重新执行生成eclipse项目的命令就OK了。</p>
-<h2 id="导入eclipse及打包"><a href="#导入eclipse及打包" class="headerlink" title="导入eclipse及打包"></a>导入eclipse及打包</h2><p>生成eclipse项目后，从eclipse里import existing project into workspace，选择hadoop-2.7.0-src目录，就会把所有代码模块导入eclipse了。接下来就可以看代码并修改了，比如增加一些日志信息等。</p>
-<p>代码修改完毕后，可以再打出一个新的hadoop-distribution包来验证代码修改效果。</p>
-<p>在hadoop-2.7.0-src目录下执行命令：<font color="red">mvn package -Pdist -Ptar -Pdocs -skipTests </font></p>
-<p>等上漫长的一段时间，编译成功后，可以到hadoop-dist/target下找到新的jar包。</p>
-<p><img src="https://raw.githubusercontent.com/maohong/picture/master/20150518-hadoop%E7%BC%96%E8%AF%91%E6%89%93%E5%8C%85/1.png" alt=""></p>
-<h2 id="补充说明"><a href="#补充说明" class="headerlink" title="补充说明"></a>补充说明</h2><p>编译过程需要从maven中央仓库下载大量依赖包，我使用的是oschina的库。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">&lt;mirror&gt;</div><div class="line">  &lt;id&gt;CN&lt;/id&gt;</div><div class="line">  &lt;name&gt;OSChina Central&lt;/name&gt;</div><div class="line">  &lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">  &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;</div><div class="line">&lt;/mirror&gt;</div><div class="line">  &lt;profile&gt;</div><div class="line">	&lt;id&gt;oschina&lt;/id&gt;</div><div class="line">	&lt;repositories&gt;</div><div class="line">		&lt;repository&gt;</div><div class="line">			&lt;id&gt;nexus&lt;/id&gt;</div><div class="line">			&lt;name&gt;local private nexus&lt;/name&gt;</div><div class="line">			&lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">			&lt;releases&gt;</div><div class="line">				&lt;enabled&gt;true&lt;/enabled&gt;</div><div class="line">			&lt;/releases&gt;</div><div class="line">			&lt;snapshots&gt;</div><div class="line">				&lt;enabled&gt;false&lt;/enabled&gt;</div><div class="line">			&lt;/snapshots&gt;</div><div class="line">		&lt;/repository&gt;</div><div class="line">	&lt;/repositories&gt;</div><div class="line">	&lt;pluginRepositories&gt;</div><div class="line">		&lt;pluginRepository&gt;</div><div class="line">			&lt;id&gt;nexus&lt;/id&gt;</div><div class="line">			&lt;name&gt;local private nexus&lt;/name&gt;</div><div class="line">			&lt;url&gt;http://maven.oschina.net/content/groups/public/&lt;/url&gt;</div><div class="line">			&lt;releases&gt;</div><div class="line">				&lt;enabled&gt;true&lt;/enabled&gt;</div><div class="line">			&lt;/releases&gt;</div><div class="line">			&lt;snapshots&gt;</div><div class="line">				&lt;enabled&gt;false&lt;/enabled&gt;</div><div class="line">			&lt;/snapshots&gt;</div><div class="line">		&lt;/pluginRepository&gt;</div><div class="line">	&lt;/pluginRepositories&gt;</div><div class="line">  &lt;/profile&gt;</div></pre></td></tr></table></figure>
-      
-    </div>
-
-    <div>
-      
-        
-      
-    </div>
-
-    <div>
-      
-        
-
-      
-    </div>
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/hadoop/" rel="tag">#hadoop</a>
-          
-            <a href="/tags/eclipse/" rel="tag">#eclipse</a>
-          
-        </div>
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2014/09/02/使用hexo-gitpage搭建博客/" rel="next" title="使用hexo+gitpage搭建博客">
-                <i class="fa fa-chevron-left"></i> 使用hexo+gitpage搭建博客
-              </a>
-            
-          </div>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/06/06/hadoop-yarn中ResourceManager的服务模块/" rel="prev" title="hadoop-yarn中ResourceManager的服务模块">
-                hadoop-yarn中ResourceManager的服务模块 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </article>
-
-
-
-    <div class="post-spread">
-      
-        
-<script>
-  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
-</script>
-
-      
-    </div>
   </div>
 
 
           </div>
           
 
-  <p>热评文章</p>
-  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
-
 
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/"
-           data-title="mac系统下hadoop-2.7源码编译、导入eclipse及打包" data-url="http://maohong.tech/2015/05/18/mac系统下hadoop-2-7源码编译、导入eclipse及打包/">
+      <div class="ds-thread" data-thread-key="baidu_verify_416JKMOEsC.html"
+           data-title="" data-url="http://maohong.tech/baidu_verify_416JKMOEsC.html">
       </div>
     
   </div>
@@ -514,17 +321,8 @@ JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6�
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel ">
+      <section class="site-overview sidebar-panel  sidebar-panel-active ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.jpg"
@@ -651,17 +449,6 @@ JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6�
       </section>
 
       
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-            
-              
-            
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#编译环境要求"><span class="nav-number">1.</span> <span class="nav-text">编译环境要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编译方法"><span class="nav-number">2.</span> <span class="nav-text">编译方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题记录"><span class="nav-number">3.</span> <span class="nav-text">问题记录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#导入eclipse及打包"><span class="nav-number">4.</span> <span class="nav-text">导入eclipse及打包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充说明"><span class="nav-number">5.</span> <span class="nav-text">补充说明</span></a></li></ol></div>
-            
-          </div>
-        </section>
-      
 
     </div>
   </aside>
@@ -782,10 +569,6 @@ JDK1.7+MAVEN 3.0以上版本如果需要编译native code，还需要CMake 2.6�
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
-
-
 
   
 
