@@ -72,7 +72,7 @@ deploy:
   type: git
   repo:
     github: git@github.com:maohong/maohong.github.io.git,master
-    coding: git@git.coding.net:maohong/maohong.git,master 
+    coding: git@git.coding.net:maohong/maohong.git,master
   #repository: git@github.com:maohong/maohong.github.io.git
   #branch: master
 
@@ -94,3 +94,16 @@ baidushare: true
 # 多说分享服务
 duoshuo_share: true
 
+sitemap:
+  path: sitemap.xml
+
+baidusitemap:
+  path: baidusitemap.xml
+
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+#type 表示类型, 是 atom 还是 rss2.
+#path 表示 Feed 路径
+#limit 最多多少篇最近文章

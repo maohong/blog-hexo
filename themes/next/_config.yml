@@ -32,6 +32,7 @@ menu:
   tags: /tags
   books: /books
   #commonweal: /404.html
+  #Rss: /atom.xml
 
 
 # Enable/Disable menu icons.
