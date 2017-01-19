@@ -94,7 +94,7 @@
 <meta property="og:site_name" content="tech.tech">
 <meta property="og:description" content="组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，峰值能达到几万个tcp连接数！
 排查系统代码并结合分析httpclient的源码发现，应用系统每次上传图片时，都会做new HttpCl">
-<meta property="og:updated_time" content="2016-07-04T15:48:19.000Z">
+<meta property="og:updated_time" content="2017-01-18T09:54:11.736Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用httpclient引起的tcp连接数超高问题">
 <meta name="twitter:description" content="组内的一个系统新上线了通过图片url上传图片到图片存储平台的功能。其中使用了httpclient，通过向图片存储平台发送MultipartPostMethod上传图片。当业务量较大时，10个处理线程满负荷运行，上传图片时，发现应用系统服务器的tcp连接数陡然升高，峰值能达到几万个tcp连接数！
