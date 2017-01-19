@@ -74,7 +74,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="tech.tech" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="MH's tech blog" type="application/atom+xml" />
 
 
 
@@ -90,9 +90,9 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="使用shell切割文件">
 <meta property="og:url" content="http://maohong.tech/2013/03/07/使用shell切割文件/index.html">
-<meta property="og:site_name" content="tech.tech">
+<meta property="og:site_name" content="MH's tech blog">
 <meta property="og:description" content="最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是par">
-<meta property="og:updated_time" content="2017-01-18T09:54:11.737Z">
+<meta property="og:updated_time" content="2016-07-04T15:51:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用shell切割文件">
 <meta name="twitter:description" content="最近工作中需要使用shell，从远程rsync数据过来预处理后提交到hdfs中，再调用pig脚本在hadoop集群上处理数据，完了fs -get下来结果文件并进行进一步处理，再推送给其他系统使用。其间需要将pig作业的结果文件合并并且均分为10个文件推送给远程服务器上的应用加载。因为结果文件比较大，远程应用拿到结果文件后使用多线程加载，所以需均分为10个小文件。虽然mr作业出来的文件结果也是par">
@@ -113,7 +113,7 @@
   };
 </script>
 
-  <title> 使用shell切割文件 | tech.tech </title>
+  <title> 使用shell切割文件 | MH's tech blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -154,11 +154,11 @@
   <div class="custom-logo-site-title">
     <a href="/"  class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <span class="site-title">tech.tech</span>
+      <span class="site-title">MH's tech blog</span>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
-  <p class="site-subtitle">Long way to go ...</p>
+  <p class="site-subtitle">分布式系统，大数据，三高技术架构</p>
 </div>
 
 <div class="site-nav-toggle">
@@ -196,16 +196,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -232,6 +222,16 @@
               <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
             
             书单
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -638,6 +638,8 @@
 </div>
 
 
+
+
       <!--  
 
 <div class="busuanzi-count">
@@ -1002,6 +1004,22 @@
 
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
 
 </body>
 </html>

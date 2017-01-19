@@ -74,7 +74,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="tech.tech" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="MH's tech blog" type="application/atom+xml" />
 
 
 
@@ -92,14 +92,14 @@ redis.clients.jedis.exceptions.JedisConnectionException">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis服务端连接断开问题诊断">
 <meta property="og:url" content="http://maohong.tech/2014/06/01/redis服务端连接断开问题诊断/index.html">
-<meta property="og:site_name" content="tech.tech">
+<meta property="og:site_name" content="MH's tech blog">
 <meta property="og:description" content="问题现象前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。
 
 redis.clients.jedis.exceptions.JedisConnectionException">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/2.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/maohong/picture/master/20140601-redis%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/3.png">
-<meta property="og:updated_time" content="2017-01-18T09:54:11.735Z">
+<meta property="og:updated_time" content="2016-07-09T08:39:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis服务端连接断开问题诊断">
 <meta name="twitter:description" content="问题现象前段时间，由于线上redis服务器的内存使用率达到了机器总内存的50%以上，导致内存数据的dump持久化一直失败。扩展到多台redis后，应用系统访问redis时，在业务量较少时，时不时会出现以下异常，当业务量较大，redis访问频率很高时，却不会发生这个异常，一时觉得很诡异。
@@ -123,7 +123,7 @@ redis.clients.jedis.exceptions.JedisConnectionException">
   };
 </script>
 
-  <title> redis服务端连接断开问题诊断 | tech.tech </title>
+  <title> redis服务端连接断开问题诊断 | MH's tech blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -164,11 +164,11 @@ redis.clients.jedis.exceptions.JedisConnectionException">
   <div class="custom-logo-site-title">
     <a href="/"  class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <span class="site-title">tech.tech</span>
+      <span class="site-title">MH's tech blog</span>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
-  <p class="site-subtitle">Long way to go ...</p>
+  <p class="site-subtitle">分布式系统，大数据，三高技术架构</p>
 </div>
 
 <div class="site-nav-toggle">
@@ -206,16 +206,6 @@ redis.clients.jedis.exceptions.JedisConnectionException">
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -242,6 +232,16 @@ redis.clients.jedis.exceptions.JedisConnectionException">
               <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
             
             书单
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -696,6 +696,8 @@ redis.clients.jedis.exceptions.JedisConnectionException">
 </div>
 
 
+
+
       <!--  
 
 <div class="busuanzi-count">
@@ -1060,6 +1062,22 @@ redis.clients.jedis.exceptions.JedisConnectionException">
 
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
 
 </body>
 </html>
