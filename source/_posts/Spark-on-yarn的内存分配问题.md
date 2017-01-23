@@ -2,8 +2,8 @@
 title: Spark on yarn的内存分配问题
 date: 2015-08-11 13:23:13
 tags:
-- Spark
-- Yarn
+- spark
+- yarn
 - 内存分配
 categories:
 - Spark

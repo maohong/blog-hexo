@@ -2,7 +2,7 @@
 title: Storm的消息可靠处理机制
 date: 2015-11-05 20:51:50
 tags:
-- Storm
+- storm
 - 实时计算
 categories:
 - Storm

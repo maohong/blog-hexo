@@ -2,8 +2,8 @@
 title: storm集群supervisor节点异常退出问题排查
 date: 2015-07-03 20:48:50
 tags:
-- Storm
-- Supervisor
+- storm
+- supervisor
 - 异常排查
 categories:
 - Storm
