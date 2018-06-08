@@ -81,9 +81,9 @@
         <title>Spark on yarn的内存分配问题</title>
         <pubTime>2015-08-11T05:23:13.000Z</pubTime>
         
-        <tag>spark</tag>
-         
         <tag>yarn</tag>
+         
+        <tag>spark</tag>
          
         <tag>内存分配</tag>
          
@@ -152,9 +152,9 @@
         <title>hadoop-yarn中ResourceManager的服务模块</title>
         <pubTime>2015-06-06T05:10:10.000Z</pubTime>
         
-        <tag>yarn</tag>
-         
         <tag>hadoop</tag>
+         
+        <tag>yarn</tag>
          
          
            
