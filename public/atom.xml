@@ -827,9 +827,9 @@
     
       <category term="zookeeper" scheme="http://maohong.tech/tags/zookeeper/"/>
     
-      <category term="分布式协调" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
-    
       <category term="分布式应用" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%BA%94%E7%94%A8/"/>
+    
+      <category term="分布式协调" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
     
   </entry>
   
@@ -1376,9 +1376,9 @@
     
       <category term="zookeeper" scheme="http://maohong.tech/tags/zookeeper/"/>
     
-      <category term="横向扩展" scheme="http://maohong.tech/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
-    
       <category term="分布式协调" scheme="http://maohong.tech/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%8D%8F%E8%B0%83/"/>
+    
+      <category term="横向扩展" scheme="http://maohong.tech/tags/%E6%A8%AA%E5%90%91%E6%89%A9%E5%B1%95/"/>
     
   </entry>
   
